@@ -1,0 +1,51 @@
+classDiagram
+class User {
+    First Name
+    Last Name
+    Age
+    Email
+    PhoneNumber
+    Password
+    IsAdmin
+    Register()
+    Login()
+    UpdateProfile()
+    DeleteProfile()
+}
+class Place {
+    Title
+    Description
+    Price
+    Latitude
+    Longitude
+    Creation Date
+    MaxPeople
+    UserID
+    CreatePlace()
+    DeletePlace()
+    UpdatePlace()
+    ListPlace()
+}
+class Review {
+    PlaceID
+    UserID
+    Rating
+    Comment
+    CreateReview()
+    UpdateReview()
+    DeletReview()
+    ListReview()
+}
+class Amenity {
+    PlaceID
+    Name
+    Description
+    CreateAmenity()
+    UpdateAmenity()
+    DeleteAmenity()
+    ListAmenity()
+}
+User "1" -- "0.." Review: Write
+User "1" -- "0.." Place: Create
+Place "1" -- "0.." Amenity: Create
+Place "1" -- "0.." Review: Write
