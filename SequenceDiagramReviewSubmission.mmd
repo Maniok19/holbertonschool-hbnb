@@ -1,0 +1,12 @@
+sequenceDiagram
+  participant User
+  participant PresentationLayer
+  participant BusinessLogicLayer
+  participant PersistenceLayer
+
+  User->>PresentationLayer: Submits a review for a place with rating and comment
+  PresentationLayer->>BusinessLogicLayer: Validates data and creates review object
+  BusinessLogicLayer->>PersistenceLayer: Saves review data to database
+  PersistenceLayer-->>BusinessLogicLayer: Returns success/failure
+  BusinessLogicLayer-->>PresentationLayer: Returns result to presentation
+  PresentationLayer-->>User: Returns success/failure message

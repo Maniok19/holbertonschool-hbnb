@@ -1,0 +1,12 @@
+sequenceDiagram
+  participant User
+  participant PresentationLayer
+  participant BusinessLogicLayer
+  participant PersistenceLayer
+
+  User->>PresentationLayer: Requests a list of places based on criteria
+  PresentationLayer->>BusinessLogicLayer: Processes request and retrieves places
+  BusinessLogicLayer->>PersistenceLayer: Fetches place data from database
+  PersistenceLayer-->>BusinessLogicLayer: Returns list of places
+  BusinessLogicLayer-->>PresentationLayer: Returns list to presentation
+  PresentationLayer-->>User: Returns list of places
