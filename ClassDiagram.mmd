@@ -1,51 +1,57 @@
 classDiagram
-class User {
-    First Name
-    Last Name
-    Age
-    Email
-    PhoneNumber
-    Password
-    IsAdmin
-    Register()
-    Login()
-    UpdateProfile()
-    DeleteProfile()
-}
-class Place {
-    Title
-    Description
-    Price
-    Latitude
-    Longitude
-    Creation Date
-    MaxPeople
-    UserID
-    CreatePlace()
-    DeletePlace()
-    UpdatePlace()
-    ListPlace()
-}
-class Review {
-    PlaceID
-    UserID
-    Rating
-    Comment
-    CreateReview()
-    UpdateReview()
-    DeletReview()
-    ListReview()
-}
-class Amenity {
-    PlaceID
-    Name
-    Description
-    CreateAmenity()
-    UpdateAmenity()
-    DeleteAmenity()
-    ListAmenity()
-}
-User "1" -- "0.." Review: Write
-User "1" -- "0.." Place: Create
-Place "1" -- "0.." Amenity: Create
-Place "1" -- "0.." Review: Write
+  class User {
+    + UUID id
+    + string firstName
+    + string lastName
+    + string email
+    + string password
+    + boolean isAdmin
+    + DateTime createdAt
+    + DateTime updatedAt
+    + register()
+    + updateProfile()
+    + delete()
+  }
+  class Place {
+    + UUID id
+    + string title
+    + string description
+    + float price
+    + float latitude
+    + float longitude
+    + UUID ownerId
+    + DateTime createdAt
+    + DateTime updatedAt
+    + create()
+    + update()
+    + delete()
+    + list()
+  }
+  class Review {
+    + UUID id
+    + UUID placeId
+    + UUID userId
+    + int rating
+    + string comment
+    + DateTime createdAt
+    + DateTime updatedAt
+    + create()
+    + update()
+    + delete()
+    + listByPlace()
+  }
+  class Amenity {
+    + UUID id
+    + string name
+    + string description
+    + DateTime createdAt
+    + DateTime updatedAt
+    + create()
+    + update()
+    + delete()
+    + list()
+  }
+
+  User "1" -- "0..*" Place : owns
+  Place "1" -- "0..*" Review : has
+  Place "1" -- "0..*" Amenity : has
