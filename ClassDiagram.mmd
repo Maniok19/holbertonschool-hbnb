@@ -1,58 +1,59 @@
 classDiagram
-  class User {
+  class Super{
     + UUID id
+    + DateTime createdAt
+    + DateTime updatedAt
+  }
+  class User {
+
     + string firstName
     + string lastName
     + string email
     + string password
     + boolean isAdmin
-    + DateTime createdAt
-    + DateTime updatedAt
     + register()
     + updateProfile()
     + delete()
     + update to admin()
   }
   class Place {
-    + UUID id
     + string title
     + string description
     + float price
     + float latitude
     + float longitude
     + UUID ownerId
-    + DateTime createdAt
-    + DateTime updatedAt
     + create()
     + update()
     + delete()
     + list()
   }
   class Review {
-    + UUID id
+
     + UUID placeId
     + UUID userId
     + int rating
     + string comment
-    + DateTime createdAt
-    + DateTime updatedAt
     + create()
     + update()
     + delete()
     + listByPlace()
   }
   class Amenity {
-    + UUID id
+
     + string name
     + string description
-    + DateTime createdAt
-    + DateTime updatedAt
     + create()
     + update()
     + delete()
     + list()
   }
 
-  User "1" -- "0..*" Place : owns
-  Place "1" -- "0..*" Review : has
-  Place "1" -- "0..*" Amenity : has
+  Super ..|> User
+  Super ..|> Place
+  Super ..|> Review
+  Super ..|> Amenity
+  User "1" ..> "0..*" Place : owns
+  Place "1" .. "0..*" Review : has
+  Place "0..*" -- "0..*" Amenity : has
+  User "1" -- "0..*" Review : has
