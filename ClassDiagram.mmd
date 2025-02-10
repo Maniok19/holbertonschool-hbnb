@@ -54,6 +54,6 @@ classDiagram
   Super ..|> Review
   Super ..|> Amenity
   User "1" ..> "0..*" Place : owns
-  Place "1" .. "0..*" Review : has
+  Place "1" --* "0..*" Review : has
   Place "0..*" -- "0..*" Amenity : has
   User "1" -- "0..*" Review : has
