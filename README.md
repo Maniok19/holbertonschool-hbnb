@@ -27,20 +27,45 @@ classDiagram
   class PresentationLayer {
     <<Interface>>
     + ServiceAPI
+    + WebControllers
+    + ViewTemplates
+    + Forms
+    + InputValidation
   }
   class BusinessLogicLayer {
     + ModelClasses
+    + ServiceImplementations
+    + BusinessRules
+    + DTOs
+    + Utilities
   }
   class PersistenceLayer {
     + DatabaseAccess
+    + DataMappers
+    + QueryServices
+    + CacheManagement
   }
+  
   PresentationLayer -- BusinessLogicLayer : Facade Pattern
   BusinessLogicLayer -- PersistenceLayer : Database Operations
 ```
 ### Core Functionalities
 
 #### User Registration Flow
-![User Registration](SequenceDiagramUserRegistration.mmd)
+```mermaid
+sequenceDiagram
+participant User
+participant API
+participant BusinessLogic
+participant Database
+
+User->>API: API Call (e.g., Register User)
+API->>BusinessLogic: Validate and Process Request
+BusinessLogic->>Database: Save Data
+Database-->>BusinessLogic: Confirm Save
+BusinessLogic-->>API: Return Response
+API-->>User: Return Success/Failure
+```
 
 #### Place Management
 - **Place Creation:**
@@ -55,27 +80,73 @@ classDiagram
 ### Data Model
 
 The application's data structure is represented in the following class diagram:
+```mermaid
+classDiagram
+  class Super{
+    + UUID id
+    + DateTime createdAt
+    + DateTime updatedAt
+  }
+  class User {
 
-![Class Diagram](ClassDiagram.mmd)
+    + string firstName
+    + string lastName
+    + string email
+    + string password
+    + boolean isAdmin
+    + register()
+    + updateProfile()
+    + delete()
+    + update to admin()
+  }
+  class Place {
+    + string title
+    + string description
+    + float price
+    + float latitude
+    + float longitude
+    + UUID ownerId
+    + create()
+    + update()
+    + delete()
+    + list()
+  }
+  class Review {
 
+    + UUID placeId
+    + UUID userId
+    + int rating
+    + string comment
+    + create()
+    + update()
+    + delete()
+    + listByPlace()
+  }
+  class Amenity {
+
+    + string name
+    + string description
+    + create()
+    + update()
+    + delete()
+    + list()
+  }
+
+  Super ..|> User
+  Super ..|> Place
+  Super ..|> Review
+  Super ..|> Amenity
+  User "1" o-- "0..*" Place : owns
+  Place "1" o-- "0..*" Review : has
+  Place "0..*" o-- "0..*" Amenity : has
+  User "1" o-- "0..*" Review : has
+```
 ### Technologies Used
 To be completed
 
 ### Installation
 To be completed
-  class PresentationLayer {
-    <<Interface>>
-    + ServiceAPI
-  }
-  class BusinessLogicLayer {
-    + ModelClasses
-  }
-  class PersistenceLayer {
-    + DatabaseAccess
-  }
-  PresentationLayer -- BusinessLogicLayer : Facade Pattern
-  BusinessLogicLayer -- PersistenceLayer : Database Operations
-```
+
 ### Core Functionalities
 
 #### User Registration Flow
@@ -105,5 +176,5 @@ To be completed
 To be completed
 # Authors
 Esteban Cratere
-Mano Delacourt 
+Mano Delcourt 
 Herve Le Guennec

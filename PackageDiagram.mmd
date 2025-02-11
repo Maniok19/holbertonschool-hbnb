@@ -2,12 +2,25 @@ classDiagram
   class PresentationLayer {
     <<Interface>>
     + ServiceAPI
+    + WebControllers
+    + ViewTemplates
+    + Forms
+    + InputValidation
   }
   class BusinessLogicLayer {
     + ModelClasses
+    + ServiceImplementations
+    + BusinessRules
+    + DTOs
+    + Utilities
   }
   class PersistenceLayer {
     + DatabaseAccess
+    + DataMappers
+    + QueryServices
+    + CacheManagement
   }
+  
   PresentationLayer -- BusinessLogicLayer : Facade Pattern
   BusinessLogicLayer -- PersistenceLayer : Database Operations
+  
