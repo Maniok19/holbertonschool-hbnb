@@ -22,6 +22,8 @@ A comprehensive web application that replicates the core functionalities of AirB
 
 The application follows a three-tier architecture:
 ```mermaid
+classDiagram
+
 class PresentationLayer {
     +UserController
     +PlaceController
