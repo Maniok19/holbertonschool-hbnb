@@ -12,7 +12,6 @@ This document presents the project to develop a housing location platform inspir
 ### Architecture Overview
 
 The application follows a three-tier architecture:
-```mermaid
 classDiagram# holbertonschool-hbnb
 
 ## AirBnB Clone Project
