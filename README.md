@@ -24,30 +24,33 @@ A comprehensive web application that replicates the core functionalities of AirB
 The application follows a three-tier architecture:
 ```mermaid
 classDiagram
-  class PresentationLayer {
-    <<Interface>>
-    + ServiceAPI
-    + WebControllers
-    + ViewTemplates
-    + Forms
-    + InputValidation
-  }
-  class BusinessLogicLayer {
-    + ModelClasses
-    + ServiceImplementations
-    + BusinessRules
-    + DTOs
-    + Utilities
-  }
-  class PersistenceLayer {
-    + DatabaseAccess
-    + DataMappers
-    + QueryServices
-    + CacheManagement
-  }
-  
-  PresentationLayer -- BusinessLogicLayer : Facade Pattern
-  BusinessLogicLayer -- PersistenceLayer : Database Operations
+
+class PresentationLayer {
+    +UserController
+    +PlaceController
+    +ReviewController
+    +AmenityController
+    +WebServices
+    +ClientUI
+}
+
+class BusinessLogicLayer {
+    +UserManager
+    +PlaceManager
+    +ReviewManager
+    +AmenityManager
+}
+
+class PersistenceLayer {
+    +UserDAO
+    +PlaceDAO
+    +ReviewDAO
+    +AmenityDAO
+    +DatabaseConnection
+}
+
+PresentationLayer --> BusinessLogicLayer : Facade Pattern (Service Interface)
+BusinessLogicLayer --> PersistenceLayer : Data Access Operations
 ```
 ### Core Functionalities
 
