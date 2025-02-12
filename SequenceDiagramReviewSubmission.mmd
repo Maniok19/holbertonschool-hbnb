@@ -3,6 +3,7 @@ sequenceDiagram
   participant PresentationLayer
   participant BusinessLogicLayer
   participant PersistenceLayer
+  participant Audit
 
   User->>PresentationLayer: Submits a review for a place with rating and comment
   PresentationLayer->>BusinessLogicLayer: Validates data and creates review object
@@ -10,3 +11,5 @@ sequenceDiagram
   PersistenceLayer-->>BusinessLogicLayer: Returns success/failure
   BusinessLogicLayer-->>PresentationLayer: Returns result to presentation
   PresentationLayer-->>User: Returns success/failure message
+  BusinessLogicLayer->>Audit: Logs review creation for auditing purposes
+  Audit-->>BusinessLogicLayer: Creation of the comments log
