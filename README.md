@@ -145,11 +145,6 @@ API-->>User: Return Success/Failure
 - **Review Submission:**
 ![Review Submission](SequenceDiagramReviewSubmission.mmd)
 
-### Data Model
-
-The application's data structure is represented in the following class diagram:
-
-![Class Diagram](ClassDiagram.mmd)
 
 # Authors
 Esteban Cratere
