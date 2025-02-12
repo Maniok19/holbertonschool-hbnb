@@ -8,8 +8,9 @@ sequenceDiagram
   User->>PresentationLayer: Submits a review for a place with rating and comment
   PresentationLayer->>BusinessLogicLayer: Validates data and creates review object
   BusinessLogicLayer->>PersistenceLayer: Saves review data to database
+
+  PersistenceLayer->>Audit: Logs review creation to the database
+  Audit-->>PersistenceLayer: Acknowledges log creation
   PersistenceLayer-->>BusinessLogicLayer: Returns success/failure
   BusinessLogicLayer-->>PresentationLayer: Returns result to presentation
   PresentationLayer-->>User: Returns success/failure message
-  PersistenceLayer->>Audit: Logs review creation to the database
-  Audit-->>PersistenceLayer: Acknowledges log creation
