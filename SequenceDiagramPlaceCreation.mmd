@@ -6,7 +6,14 @@ sequenceDiagram
 
   User->>PresentationLayer: Creates a new place with title, description, price, location, ownerId
   PresentationLayer->>BusinessLogicLayer: Validates data and creates place object
-  BusinessLogicLayer->>PersistenceLayer: Saves place data to database
-  PersistenceLayer-->>BusinessLogicLayer: Returns success/failure
-  BusinessLogicLayer-->>PresentationLayer: Returns result to presentation
-  PresentationLayer-->>User: Returns success/failure message
+
+  alt Validation success
+    BusinessLogicLayer->>PersistenceLayer: Saves place data to database
+    PersistenceLayer-->>BusinessLogicLayer: Returns success
+    BusinessLogicLayer->>AuditLogs: Log the new place creation
+    BusinessLogicLayer-->>PresentationLayer: Returns success message
+    PresentationLayer-->>User: Returns success message
+  else Validation failure
+    BusinessLogicLayer-->>PresentationLayer: Returns validation error
+    PresentationLayer-->>User: Returns error message
+  end
