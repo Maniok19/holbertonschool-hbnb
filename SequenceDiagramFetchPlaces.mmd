@@ -1,12 +1,26 @@
 sequenceDiagram
-  participant User
-  participant PresentationLayer
-  participant BusinessLogicLayer
-  participant PersistenceLayer
+    participant User
+    participant PresentationLayer
+    participant BusinessLogicLayer
+    participant PersistenceLayer
 
-  User->>PresentationLayer: Requests a list of places based on criteria
-  PresentationLayer->>BusinessLogicLayer: Processes request and retrieves places
-  BusinessLogicLayer->>PersistenceLayer: Fetches place data from database
-  PersistenceLayer-->>BusinessLogicLayer: Returns list of places
-  BusinessLogicLayer-->>PresentationLayer: Returns list to presentation
-  PresentationLayer-->>User: Returns list of places
+    User->>PresentationLayer: Requests a list of places based on criteria
+    Note over User,PresentationLayer: Filters: location, price, amenities
+
+    PresentationLayer->>BusinessLogicLayer: Processes request and retrieves places
+    Note over PresentationLayer,BusinessLogicLayer: Validates input parameters
+
+    BusinessLogicLayer->>PersistenceLayer: Fetches place data from database
+    Note over BusinessLogicLayer,PersistenceLayer: Builds query with filters
+
+    PersistenceLayer->>PersistenceLayer: Executes SQL query
+    PersistenceLayer-->>PersistenceLayer: Raw database results
+
+    PersistenceLayer->>BusinessLogicLayer: Returns list of places
+    Note over PersistenceLayer,BusinessLogicLayer: Converts to Place objects
+
+    BusinessLogicLayer->>PresentationLayer: Returns filtered list
+    Note over BusinessLogicLayer,PresentationLayer: Applies business rules
+
+    PresentationLayer->>User: Returns formatted list of places
+    Note over PresentationLayer,User: JSON/HTML response
