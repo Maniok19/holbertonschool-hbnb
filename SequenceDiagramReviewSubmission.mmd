@@ -11,5 +11,5 @@ sequenceDiagram
   PersistenceLayer-->>BusinessLogicLayer: Returns success/failure
   BusinessLogicLayer-->>PresentationLayer: Returns result to presentation
   PresentationLayer-->>User: Returns success/failure message
-  BusinessLogicLayer->>Audit: Logs review creation for auditing purposes
-  Audit-->>BusinessLogicLayer: Creation of the comments log
+  PersistenceLayer->>Audit: Logs review creation to the database
+  Audit-->>PersistenceLayer: Acknowledges log creation
