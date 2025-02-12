@@ -123,27 +123,113 @@ To be completed
 ```mermaid
 sequenceDiagram
 participant User
-participant API
+participant PresentationLayer 
 participant BusinessLogic
-participant Database
+participant PersistenceLayer
 
-User->>API: API Call (e.g., Register User)
-API->>BusinessLogic: Validate and Process Request
-BusinessLogic->>Database: Save Data
-Database-->>BusinessLogic: Confirm Save
-BusinessLogic-->>API: Return Response
-API-->>User: Return Success/Failure
+User->>PresentationLayer : API Call (e.g., Register User)
+PresentationLayer ->>BusinessLogic: Validate and Process Request
+BusinessLogic-->>BusinessLogic: Validate and Process Request
+ alt If validation fails
+    BusinessLogic-->>PresentationLayer: Returns validation failure
+    PresentationLayer-->>User: Returns validation error message
+  else If validation succeeds
+    BusinessLogic->>PersistenceLayer: Saves re data to database
+    PersistenceLayer->>Audit: Logs review creation to the database
+    Audit-->>PersistenceLayer: Acknowledges log creation
+    PersistenceLayer-->>BusinessLogic: Returns success/failure
+    BusinessLogic-->>PresentationLayer: Returns result to presentation
+    PresentationLayer-->>User: Returns success/failure message
+  end
 ```
 
 #### Place Management
 - **Place Creation:**
-![Place Creation](SequenceDiagramPlaceCreation.mmd)
+```mermaid
+sequenceDiagram
+  participant User
+  participant PresentationLayer
+  participant BusinessLogicLayer
+  participant PersistenceLayer
+
+  User->>PresentationLayer: Creates a new place with title, description, price, location, ownerId
+  PresentationLayer->>BusinessLogicLayer: Validates data and creates place object
+
+  alt Validation success
+
+  
+    BusinessLogicLayer->>PersistenceLayer: Saves place data to database
+    BusinessLogicLayer->>AuditLogs: Log the new place creation          
+        AuditLogs-->>PersistenceLayer:Returns success
+  
+    PersistenceLayer-->>BusinessLogicLayer: Returns success
+
+    BusinessLogicLayer-->>PresentationLayer: Returns success message
+    PresentationLayer-->>User: Returns success message
+
+
+  else Validation failure
+      AuditLogs-->>PersistenceLayer:Returns failed
+          PersistenceLayer-->>BusinessLogicLayer: Returns failed
+    BusinessLogicLayer-->>PresentationLayer: Returns validation error
+    PresentationLayer-->>User: Returns error message
+  end
+```
 
 - **Place Listing:**
-![Fetch Places](SequenceDiagramFetchPlaces.mmd)
+```mermaid
+sequenceDiagram
+    participant User
+    participant PresentationLayer
+    participant BusinessLogicLayer
+    participant PersistenceLayer
+
+    User->>PresentationLayer: Requests a list of places based on criteria
+    Note over User,PresentationLayer: Filters: location, price, amenities
+
+    PresentationLayer->>BusinessLogicLayer: Processes request and retrieves places
+    Note over PresentationLayer,BusinessLogicLayer: Validates input parameters
+
+    BusinessLogicLayer->>PersistenceLayer: Fetches place data from database
+    Note over BusinessLogicLayer,PersistenceLayer: Builds query with filters
+
+    PersistenceLayer->>PersistenceLayer: Executes SQL query
+    PersistenceLayer-->>PersistenceLayer: Raw database results
+
+    PersistenceLayer->>BusinessLogicLayer: Returns list of places
+    Note over PersistenceLayer,BusinessLogicLayer: Converts to Place objects
+
+    BusinessLogicLayer->>PresentationLayer: Returns filtered list
+    Note over BusinessLogicLayer,PresentationLayer: Applies business rules
+
+    PresentationLayer->>User: Returns formatted list of places
+    Note over PresentationLayer,User: JSON/HTML response
+```
 
 - **Review Submission:**
-![Review Submission](SequenceDiagramReviewSubmission.mmd)
+```mermaid
+sequenceDiagram
+  participant User
+  participant PresentationLayer
+  participant BusinessLogicLayer
+  participant PersistenceLayer
+  participant Audit
+
+  User->>PresentationLayer: Submits a review for a place with rating and comment
+  PresentationLayer->>BusinessLogicLayer: Send the request for review creation
+  BusinessLogicLayer-->>BusinessLogicLayer: Validates data and creates review object
+   alt if validation succeeds
+    BusinessLogicLayer->>PersistenceLayer: Saves review data to database
+    PersistenceLayer->>Audit: Logs review creation to the database
+    Audit-->>PersistenceLayer: Acknowledges log creation
+    PersistenceLayer-->>BusinessLogicLayer: Returns success/failure
+    BusinessLogicLayer-->>PresentationLayer: Returns result to presentation
+    PresentationLayer-->>User: Returns success/failure message
+    else If validation fails
+    BusinessLogicLayer-->>PresentationLayer: Returns validation failure
+    PresentationLayer-->>User: Returns validation error message
+  end
+```
 
 
 # Authors
