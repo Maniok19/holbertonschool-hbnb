@@ -8,12 +8,21 @@ sequenceDiagram
   PresentationLayer->>BusinessLogicLayer: Validates data and creates place object
 
   alt Validation success
+
+  
     BusinessLogicLayer->>PersistenceLayer: Saves place data to database
+    BusinessLogicLayer->>AuditLogs: Log the new place creation          
+        AuditLogs-->>PersistenceLayer:Returns success
+  
     PersistenceLayer-->>BusinessLogicLayer: Returns success
-    BusinessLogicLayer->>AuditLogs: Log the new place creation
+
     BusinessLogicLayer-->>PresentationLayer: Returns success message
     PresentationLayer-->>User: Returns success message
+
+
   else Validation failure
+      AuditLogs-->>PersistenceLayer:Returns failed
+          PersistenceLayer-->>BusinessLogicLayer: Returns failed
     BusinessLogicLayer-->>PresentationLayer: Returns validation error
     PresentationLayer-->>User: Returns error message
   end
