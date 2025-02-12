@@ -1,12 +1,20 @@
 sequenceDiagram
 participant User
-participant API
+participant PresentationLayer 
 participant BusinessLogic
-participant Database
+participant PersistenceLayer
 
-User->>API: API Call (e.g., Register User)
-API->>BusinessLogic: Validate and Process Request
-BusinessLogic->>Database: Save Data
-Database-->>BusinessLogic: Confirm Save
-BusinessLogic-->>API: Return Response
-API-->>User: Return Success/Failure
+User->>PresentationLayer : API Call (e.g., Register User)
+PresentationLayer ->>BusinessLogic: Validate and Process Request
+BusinessLogic-->>BusinessLogic: Validate and Process Request
+ alt If validation fails
+    BusinessLogic-->>PresentationLayer: Returns validation failure
+    PresentationLayer-->>User: Returns validation error message
+  else If validation succeeds
+    BusinessLogic->>PersistenceLayer: Saves re data to database
+    PersistenceLayer->>Audit: Logs review creation to the database
+    Audit-->>PersistenceLayer: Acknowledges log creation
+    PersistenceLayer-->>BusinessLogic: Returns success/failure
+    BusinessLogic-->>PresentationLayer: Returns result to presentation
+    PresentationLayer-->>User: Returns success/failure message
+  end
