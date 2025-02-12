@@ -5,10 +5,11 @@ This document presents the project to develop a housing location platform inspir
 # Files
 - [ClassDiagram.mmd](https://github.com/Maniok19/holbertonschool-hbnb/blob/main/ClassDiagram.mmd "ClassDiagram.mmd")
 - [PackageDiagram.mmd](https://github.com/Maniok19/holbertonschool-hbnb/blob/main/PackageDiagram.mmd "PackageDiagram.mmd")
-- 
 - [README.md](https://github.com/Maniok19/holbertonschool-hbnb/blob/main/README.md "README.md")
 - [SequenceDiagramUserRegistration.mmd](https://github.com/Maniok19/holbertonschool-hbnb/blob/main/SequenceDiagramUserRegistration.mmd "SequenceDiagramUserRegistration.mmd")
-
+- [SequenceDiagramPlaceManagement.mmd](https://github.com/Maniok19/holbertonschool-hbnb/blob/main/SequenceDiagramPlaceManagement.mmd)
+- [SequenceDiagramPlaceCreation.mmd](https://github.com/Maniok19/holbertonschool-hbnb/blob/main/SequenceDiagramPlaceCreation.mmd)
+- [SequenceDiagramReviewSubmission.mmd](https://github.com/Maniok19/holbertonschool-hbnb/blob/main/SequenceDiagramReviewSubmission.mmd)
 ## AirBnB Clone Project
 
 A comprehensive web application that replicates the core functionalities of AirBnB. This project demonstrates a full-stack implementation using a layered architecture approach.
