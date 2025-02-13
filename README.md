@@ -108,10 +108,10 @@ classDiagram
   Super <|-- Place
   Super <|-- Review
   Super <|-- Amenity
-  User "1" o-- "0..*" Place : owns
-  Place "1" o-- "0..*" Review : has
-  Place "0..*" o-- "0..*" Amenity : has
-  User "1" o-- "0..*" Review : has
+  User "1" *-- "0..*" Place : owns
+  Place "1" *-- "0..*" Review : has
+  Place "0..*" *-- "0..*" Amenity : has
+  User "1" *-- "0..*" Review : has
 ```
 ### Technologies Used
 To be completed
