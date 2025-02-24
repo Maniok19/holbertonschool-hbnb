@@ -13,12 +13,14 @@ class HBnBFacade:
         Create a new user after checking for duplicate email
         Raises ValueError if email already exists
         """
+        # Check for duplicate email before creating user
         existing_user = self.get_user_by_email(user_data['email'])
-        if (existing_user):
+        if existing_user:
             raise ValueError("Email already registered")
-            
+        
+        # Create and validate new user
         user = User(**user_data)
-        user.checking()  # Validate user data
+        user.checking()
         self.user_repo.add(user)
         return user
     
@@ -26,19 +28,16 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
     
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
+        """Get user by email"""
+        return next(
+            (user for user in self.user_repo.get_all() if user.email == email),
+            None
+        )
 
     def get_all_users(self):
-        """Get all users"""
         return self.user_repo.get_all()
     
     def update_user(self, user_id, user_data):
-        """Update an existing user"""
         user = self.get_user(user_id)
         if user:
             self.user_repo.update(user_id, user_data)
-
-    # Placeholder method for fetching a place by ID
-    def get_place(self, place_id):
-        # Logic will be implemented in later tasks
-        pass

@@ -35,6 +35,12 @@ class UserList(Resource):
         user_data = api.payload
         
         try:
+            # Check for existing user with same email
+            existing_user = facade.get_user_by_email(user_data['email'])
+            if existing_user:
+                return {'error': 'Email already registered'}, 400
+            
+            # Create new user if email not found
             new_user = facade.create_user(user_data)
             return {
                 'id': new_user.id, 
