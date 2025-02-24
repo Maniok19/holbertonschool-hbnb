@@ -48,3 +48,4 @@ class AmenityResource(Resource):
         
         facade.save_amenity(amenity)
         return {"message": f"Commodité {amenity_id} mise à jour"}
+
