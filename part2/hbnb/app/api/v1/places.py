@@ -66,7 +66,6 @@ class PlaceList(Resource):
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
                 'owner_id': new_place.owner_id,
-                'amenities': new_place.amenities
             }, 201
 
         except ValueError as e:
@@ -81,7 +80,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-            
+        
         owner = facade.get_user(place.owner_id)
         owner_data = {
             'id': owner.id,
@@ -89,7 +88,17 @@ class PlaceResource(Resource):
             'last_name': owner.last_name,
             'email': owner.email
         } if owner else None
-        
+
+        # Get all amenities for the place
+        amenity_data = []
+        for amenity_id in place.amenities:
+            amenity = facade.get_amenity(amenity_id)
+            if amenity:
+                amenity_data.append({
+                    'id': amenity.id,
+                    'name': amenity.name
+                })
+
         return {
             'id': place.id,
             'title': place.title,
@@ -98,7 +107,7 @@ class PlaceResource(Resource):
             'latitude': place.latitude,
             'longitude': place.longitude,
             'owner': owner_data,
-            'amenities': place.amenities
+            'amenities': amenity_data
         }, 200
 
     @api.expect(place_model, validate=True)
