@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ Module de gestion des commodités """
+from flask import Flask
 from flask_restx import Namespace, Resource, fields
 from app.models.amenity import Amenity
 from app.services import facade
