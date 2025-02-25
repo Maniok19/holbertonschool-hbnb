@@ -31,15 +31,14 @@ class AmenityList(Resource):
         data = api.payload
         try:
             new_amenity = Amenity(name=data['name'])
-            new_amenity.validate()
-            facade.save_amenity(new_amenity)
+            """new_amenity.validate()"""
+            facade.create_amenity(new_amenity)
             return {
-                 "id": str(new_amenity.id),
+                 "id": new_amenity.id,
                 "name": new_amenity.name
             }, 201
-        except ValueError as e:
+        except (ValueError, KeyError) as e:
             return {"error": str(e)}, 400
-
 
 
 @api.route('/<amenity_id>')
@@ -51,7 +50,10 @@ class AmenityResource(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {"error": "Commodité non trouvée"}, 404
-        return amenity.to_dict(), 200
+        return {
+                "id": amenity.id,
+                "name": amenity.name
+            }, 200
     
     @api.expect(amenity_model)
     @api.response(200, 'Amenity updated successfully')
@@ -66,6 +68,8 @@ class AmenityResource(Resource):
         
         if "name" in data:
             amenity.name = data["name"]
+        else:
+            return {"error": "Données invalides"}, 400
         
-        facade.save_amenity(amenity)
-        return {"message": f"Commodité {amenity_id} mise à jour"}
+        facade.update_amenity(amenity, data)
+        return {"message": "Amenity updated successfully"}, 200
