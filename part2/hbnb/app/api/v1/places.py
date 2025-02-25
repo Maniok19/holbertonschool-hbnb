@@ -130,7 +130,6 @@ class PlaceResource(Resource):
 
         try:
             facade.update_place(place_id, update_data)
-            place = facade.get_place(place_id)  # Get updated place
             return {
                 'id': place.id,
                 'title': place.title,
