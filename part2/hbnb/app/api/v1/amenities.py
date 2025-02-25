@@ -1,29 +1,34 @@
-#!/usr/bin/env python3
-""" Module de gestion des commodités """
-from flask import Flask
 from flask_restx import Namespace, Resource, fields
-from app.models.amenity import Amenity
 from app.services import facade
-from app.services import HBnBFacade
+from app.models.amenity import Amenity
 
+api = Namespace('amenities', description='Amenity operations')
 
-api_amenity = Namespace('amenities', description="Gestion des commodités")
-
-amenity_model = api_amenity.model('Amenity', {
-    'name': fields.String(required=True, description="Nom de la commodité")
+# Define the amenity model for input validation and documentation
+amenity_model = api.model('Amenity', {
+    'name': fields.String(required=True, description='Name of the amenity')
 })
 
-@api_amenity.route('/')
+@api.route('/')
 class AmenityList(Resource):
+    @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
-        """ Récupérer toutes les commodités """
+        """Retrieve a list of all amenities"""
         amenities = facade.get_all_amenities()
-        return [amenity.to_dict() for amenity in amenities]
+        return [
+            {
+                "id": amenity.id,
+                "name": amenity.name
+            }
+            for amenity in amenities
+        ], 200
 
-    @api_amenity.expect(amenity_model, validate=True)
+    @api.expect(amenity_model)
+    @api.response(201, 'Amenity successfully created')
+    @api.response(400, 'Invalid input data')
     def post(self):
-        """ Ajouter une nouvelle commodité """
-        data = api_amenity.payload
+        """Register a new amenity"""
+        data = api.payload
         try:
             new_amenity = Amenity(name=data['name'])
             new_amenity.validate()
@@ -35,11 +40,26 @@ class AmenityList(Resource):
         except ValueError as e:
             return {"error": str(e)}, 400
 
-@api_amenity.route('/<string:amenity_id>')
+
+
+@api.route('/<amenity_id>')
 class AmenityResource(Resource):
+    @api.response(200, 'Amenity details retrieved successfully')
+    @api.response(404, 'Amenity not found')
+    def get(self, amenity_id):
+        """Get amenity details by ID"""
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {"error": "Commodité non trouvée"}, 404
+        return amenity.to_dict(), 200
+    
+    @api.expect(amenity_model)
+    @api.response(200, 'Amenity updated successfully')
+    @api.response(404, 'Amenity not found')
+    @api.response(400, 'Invalid input data')
     def put(self, amenity_id):
-        """ Mettre à jour une commodité """
-        data = api_amenity.payload
+        """Update an amenity's information"""
+        data = api.payload
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {"error": "Commodité non trouvée"}, 404
@@ -49,4 +69,3 @@ class AmenityResource(Resource):
         
         facade.save_amenity(amenity)
         return {"message": f"Commodité {amenity_id} mise à jour"}
-
