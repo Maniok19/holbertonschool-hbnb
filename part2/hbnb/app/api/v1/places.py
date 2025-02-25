@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource, fields
+from flask import jsonify
 from app.services import facade
 
 api = Namespace('places', description='Place operations')
@@ -38,19 +39,25 @@ class PlaceList(Resource):
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Title already registered')
     @api.response(400, 'Invalid input data')
+    @api.response(404, 'Owner not found')
     def post(self):
         """Register a new place"""
         place_data = api.payload
 
         try:
-            # Check for existing place with the same title
+            # First check if the owner exists
+            owner = facade.get_user(place_data['owner_id'])
+            if not owner:
+                return {'error': 'Owner not found'}, 404
+
+            # Check for existing place with same title
             existing_place = facade.get_place_by_title(place_data['title'])
             if existing_place:
                 return {'error': 'Title already registered'}, 400
 
-            # Create new place if title is unique
+            # Create new place if owner exists and title is unique
             new_place = facade.create_place(place_data)
-
+        
             return {
                 'id': new_place.id,
                 'title': new_place.title,
@@ -61,6 +68,7 @@ class PlaceList(Resource):
                 'owner_id': new_place.owner_id,
                 'amenities': new_place.amenities
             }, 201
+
         except ValueError as e:
             return {'error': str(e)}, 400
 
@@ -73,6 +81,15 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
+            
+        owner = facade.get_user(place.owner_id)
+        owner_data = {
+            'id': owner.id,
+            'first_name': owner.first_name,
+            'last_name': owner.last_name,
+            'email': owner.email
+        } if owner else None
+        
         return {
             'id': place.id,
             'title': place.title,
@@ -80,7 +97,7 @@ class PlaceResource(Resource):
             'price': place.price,
             'latitude': place.latitude,
             'longitude': place.longitude,
-            'owner_id': place.owner_id,
+            'owner': owner_data,
             'amenities': place.amenities
         }, 200
 

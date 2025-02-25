@@ -1,14 +1,15 @@
 from app.models.base import BaseModel
 
 class Place(BaseModel):
-    def __init__(self, price, latitude, longitude, description, owner, title):
+    def __init__(self, title, description, price, latitude, longitude, owner_id):
         super().__init__()
+        self.title = title
+        self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.description = description
-        self.owner = owner
-        self.title = title
+        self.owner_id = owner_id
+        self.amenities = []
 
     def checking(self):
         # Vérification du prix
@@ -28,7 +29,7 @@ class Place(BaseModel):
             raise ValueError("La description doit être une chaîne de caractères d'au moins 10 caractères.")
 
         # Vérification du propriétaire (owner)
-        if not isinstance(self.owner, str) or len(self.owner.strip()) == 0:
+        if not isinstance(self.owner_id, str) or len(self.owner_id.strip()) == 0:
             raise ValueError("L'owner doit être une chaîne de caractères non vide.")
 
         # Vérification du titre
