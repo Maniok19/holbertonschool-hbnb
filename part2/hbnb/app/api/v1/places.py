@@ -12,7 +12,7 @@ place_model = api.model('Place', {
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities IDs")
+    'amenities': fields.List(fields.String, required=True, description="List of amenities IDs"),
     'reviews': fields.List(fields.String, description="List of review IDs")
 })
 
