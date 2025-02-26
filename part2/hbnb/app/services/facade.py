@@ -2,6 +2,7 @@ from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
+from app.models.review import Review
 
 class HBnBFacade:
     def __init__(self):
@@ -63,7 +64,22 @@ class HBnBFacade:
     # REVIEW METHODS
 
     def create_review(self, review_data):
-        return self.review_repo.add(review_data)
+        """Create a new review"""
+        # Validate required fields
+        required_fields = ['text', 'rating', 'user_id', 'place_id']
+        for field in required_fields:
+            if field not in review_data:
+                raise ValueError(f"Missing required field: {field}")
+        
+        # Create Review object
+        review = Review(
+            text=review_data['text'],
+            rating=review_data['rating'],
+            user_id=review_data['user_id'],
+            place_id=review_data['place_id']
+        )
+        
+        return self.review_repo.add(review)
 
     def get_review(self, review_id):
         return self.review_repo.get(review_id)
