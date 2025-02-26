@@ -2,6 +2,7 @@ from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
+from app.models.review import Review
 
 class HBnBFacade:
     def __init__(self):
@@ -63,7 +64,12 @@ class HBnBFacade:
     # REVIEW METHODS
 
     def create_review(self, review_data):
-        return self.review_repo.add(review_data)
+        """Create a new review"""
+        # Create and validate new user
+        review = Review(**review_data)
+        review.checking()
+        self.review_repo.add(review)
+        return review
 
     def get_review(self, review_id):
         return self.review_repo.get(review_id)

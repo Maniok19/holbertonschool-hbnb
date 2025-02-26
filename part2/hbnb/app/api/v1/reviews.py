@@ -19,9 +19,16 @@ class ReviewList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new review"""
+
+        
         review_data = api.payload
+            # Check for existing user
+        existing_user = facade.get_user(review_data)
+        if existing_user:
+            return {'error': 'Email already registered'}, 400
         try:
             new_review = facade.create_review(review_data)
+
             return {
                 'id': new_review.id,
                 'text': new_review.text,
