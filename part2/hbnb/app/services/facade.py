@@ -77,8 +77,19 @@ class HBnBFacade:
     def get_all_reviews(self):
         return self.review_repo.get_all()
 
+
     def get_reviews_by_place(self, place_id):
-        return self.review_repo.get(place_id)
+        """Get all reviews for a specific place"""
+        # First check if place exists
+        place = self.get_place(place_id)
+        if not place:
+            return None
+            
+        # Return all reviews for this place
+        return [
+            review for review in self.review_repo.get_all() 
+            if review.place_id == place_id
+        ]
 
     def update_review(self, review_id, review_data):
         return self.review_repo.update(review_id, review_data)
