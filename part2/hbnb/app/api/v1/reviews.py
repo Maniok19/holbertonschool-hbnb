@@ -17,25 +17,35 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(404, 'User or Place not found')
     def post(self):
         """Register a new review"""
-
-        
         review_data = api.payload
-            # Check for existing user
-        existing_user = facade.get_user(review_data)
-        if existing_user:
-            return {'error': 'Email already registered'}, 400
+
+        # Check if user exists
+        user = facade.get_user(review_data['user_id'])
+        if not user:
+            return {'error': 'User not found'}, 404
+
+        # Check if place exists
+        place = facade.get_place(review_data['place_id'])
+        if not place:
+            return {'error': 'Place not found'}, 404
+
+        # Validate rating range
+        if not isinstance(review_data['rating'], int) or not (1 <= review_data['rating'] <= 5):
+            return {'error': 'Rating must be an integer between 1 and 5'}, 400
+
         try:
             new_review = facade.create_review(review_data)
-
             return {
                 'id': new_review.id,
                 'text': new_review.text,
                 'rating': new_review.rating,
                 'user_id': new_review.user_id,
-                'place_id': new_review.place_id
+                'place_id': new_review.place_id,
             }, 201
+
         except (ValueError, KeyError) as e:
             return {"error": str(e)}, 400
 
@@ -70,26 +80,26 @@ class ReviewResource(Resource):
             'place_id': review.place_id
         }, 200
 
-@api.expect(review_model)
-@api.response(200, 'Review updated successfully')
-@api.response(404, 'Review not found')
-@api.response(400, 'Invalid input data')
-def put(self, review_id):
-    """Update a review's information"""
-    review = facade.get_review(review_id)
-    if not review:
-        return {"error": "Review not found"}, 404
+    @api.expect(review_model)
+    @api.response(200, 'Review updated successfully')
+    @api.response(404, 'Review not found')
+    @api.response(400, 'Invalid input data')
+    def put(self, review_id):
+        """Update a review's information"""
+        review = facade.get_review(review_id)
+        if not review:
+            return {"error": "Review not found"}, 404
 
-    review_data = api.payload
-    try:
-        updated_review = facade.update_review(review_id, review_data)
-        return {
-            'id': updated_review.id,
-            'text': updated_review.text,
-            'rating': updated_review.rating,
-        }, 200
-    except (ValueError, KeyError) as e:
-        return {"error": str(e)}, 400
+        review_data = api.payload
+        try:
+            updated_review = facade.update_review(review_id, review_data)
+            return {
+                'id': updated_review.id,
+                'text': updated_review.text,
+                'rating': updated_review.rating,
+            }, 200
+        except (ValueError, KeyError) as e:
+            return {"error": str(e)}, 400
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
