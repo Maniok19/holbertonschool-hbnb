@@ -65,21 +65,11 @@ class HBnBFacade:
 
     def create_review(self, review_data):
         """Create a new review"""
-        # Validate required fields
-        required_fields = ['text', 'rating', 'user_id', 'place_id']
-        for field in required_fields:
-            if field not in review_data:
-                raise ValueError(f"Missing required field: {field}")
-        
-        # Create Review object
-        review = Review(
-            text=review_data['text'],
-            rating=review_data['rating'],
-            user_id=review_data['user_id'],
-            place_id=review_data['place_id']
-        )
-        
-        return self.review_repo.add(review)
+        # Create and validate new user
+        review = Review(**review_data)
+        review.checking()
+        self.review_repo.add(review)
+        return review
 
     def get_review(self, review_id):
         return self.review_repo.get(review_id)
