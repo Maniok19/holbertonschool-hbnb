@@ -11,10 +11,6 @@ class TestAPI(unittest.TestCase):
         self.place_id = self.create_test_place()
         self.amenity_id = self.create_test_amenity()
 
-    def tearDown(self):
-        self.delete_test_user()
-        self.delete_test_place()
-
     def create_test_user(self):
         email = f"test_{uuid.uuid4()}@example.com"
         response = self.client.post('/api/v1/users/', json={
@@ -45,12 +41,6 @@ class TestAPI(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 201, f"Error creating amenity: {response.json}")
         return response.json.get("id")
-
-    def delete_test_user(self):
-        self.client.delete(f'/api/v1/users/{self.user_id}')
-
-    def delete_test_place(self):
-        self.client.delete(f'/api/v1/places/{self.place_id}')
 
     def test_create_review(self):
         response = self.client.post('/api/v1/reviews/', json={
