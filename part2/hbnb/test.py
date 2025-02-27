@@ -44,9 +44,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 201, f"Error creating amenity: {response.json}")
         return response.json.get("id")
 
-    def create_test_review(self):
-        pass
-
+    
     # test create
 
     def test_create_review(self):
@@ -65,6 +63,7 @@ class TestAPI(unittest.TestCase):
         pass
 
     def test_create_amenity(self):
+
         pass
 
     # test create invalid data
@@ -78,13 +77,42 @@ class TestAPI(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
-    def test_create_user_invalid_data(self):
-        pass
+        def test_create_user_invalid_data(self):
+            response = self.client.post('/api/v1/users/', json={
+                'first_name': '',
+                'last_name': 'Doe',
+                'email': 'john.doe@example.com',
+            })
+            assert response.status_code == 400
+            data = json.loads(response.data)
+            assert 'error' in data
+
+        def test_create_user_invalid_datax(self):
+            response = self.client.post('/api/v1/users/', json={
+                'first_name': 'joe',
+                'last_name': '',
+                'email': 'john.doe@example.com',
+            })
+            assert response.status_code == 400
+            data = json.loads(response.data)
+            assert 'error' in data
+
+        def test_create_user_invalid_datas(self):
+            response = self.client.post('/api/v1/users/', json={
+                'first_name': 'joe',
+                'last_name': 'Doe',
+                'email': 'john.doe@example.com',
+            })
+            assert response.status_code == 400
+            data = json.loads(response.data)
+            assert 'error' in data
 
     def test_create_place_invalid_data(self):
+
         pass
 
     def test_create_amenity_invalid_data(self):
+
         pass
 
     # test get
@@ -114,6 +142,7 @@ class TestAPI(unittest.TestCase):
 
     def test_get_review_by_id(self):
         pass
+
 
     # test get by id invalid data
 
