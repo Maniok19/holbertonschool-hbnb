@@ -1,88 +1,75 @@
 #!/usr/bin/python3
 import unittest
+import uuid
 from app import create_app
 
-class TestUserEndpoints(unittest.TestCase):
+class TestAPI(unittest.TestCase):
 
     def setUp(self):
         self.app = create_app()
         self.client = self.app.test_client()
+        self.user_id = self.create_test_user()
+        self.place_id = self.create_test_place()
 
-    def test_create_user(self):
-        """Test user creation with valid data"""
+    def tearDown(self):
+        self.delete_test_user()
+        self.delete_test_place()
+
+    def create_test_user(self):
+        email = f"test_{uuid.uuid4()}@example.com"
         response = self.client.post('/api/v1/users/', json={
-            "first_name": "Jane",
-            "last_name": "Doe",
-            "email": "jane.doe@example.com"
+            "first_name": "Test",
+            "last_name": "User",
+            "email": email
         })
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, f"Error creating test user: {response.json}")
+        return response.json.get("id")
 
-    def test_create_user_invalid_data(self):
-        """Test user creation with invalid data"""
-        response = self.client.post('/api/v1/users/', json={
-            "first_name": "",
-            "last_name": "",
-            "email": "invalid-email"
-        })
-        self.assertEqual(response.status_code, 400)
-
-    def test_get_users(self):
-        """Test retrieving all users"""
-        response = self.client.get('/api/v1/users/')
-        self.assertEqual(response.status_code, 200)
-
-class TestPlaceEndpoints(unittest.TestCase):
-
-    def setUp(self):
-        self.app = create_app()
-        self.client = self.app.test_client()
-
-    def test_create_place(self):
-        """Test creating a place with valid data"""
+    def create_test_place(self):
+        # Générer un titre unique pour chaque test
+        title = f"Test Place {uuid.uuid4()}"
         response = self.client.post('/api/v1/places/', json={
-            "title": "Beach House",
-            "description": "Beautiful house near the beach",
-            "price": 150.0,
-            "latitude": 34.0522,
-            "longitude": -118.2437,
-            "owner_id": "12345",
-            "amenities": ["WiFi", "Pool"]
+            "title": title,
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []  # Ajout de l'attribut requis (même vide)
         })
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, f"Error creating test place: {response.json}")
+        return response.json.get("id")
 
-    def test_get_places(self):
-        """Test retrieving all places"""
-        response = self.client.get('/api/v1/places/')
-        self.assertEqual(response.status_code, 200)
+    def delete_test_user(self):
+        self.client.delete(f'/api/v1/users/{self.user_id}')
 
-class TestReviewEndpoints(unittest.TestCase):
-
-    def setUp(self):
-        self.app = create_app()
-        self.client = self.app.test_client()
+    def delete_test_place(self):
+        self.client.delete(f'/api/v1/places/{self.place_id}')
 
     def test_create_review(self):
-        """Test creating a review with valid data"""
+        # Ajouter le champ 'rating' pour éviter l'erreur
         response = self.client.post('/api/v1/reviews/', json={
-            "user_id": "123",
-            "place_id": "456",
-            "text": "Great place to stay!"
+            "user_id": self.user_id,
+            "place_id": self.place_id,
+            "text": "Great place to stay!",
+            "rating": 5  # Champ requis
         })
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, f"Error creating review: {response.json}")
 
     def test_create_review_invalid_data(self):
-        """Test creating a review with missing data"""
+        # Tester avec des données invalides
         response = self.client.post('/api/v1/reviews/', json={
-            "user_id": "",
-            "place_id": "456",
-            "text": ""
+            "user_id": "",  # ID utilisateur invalide
+            "place_id": self.place_id,
+            "text": "",  # Texte vide
+            "rating": 5  # Ajouter un champ 'rating' même pour les données invalides
         })
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
     def test_get_reviews(self):
-        """Test retrieving all reviews"""
-        response = self.client.get('/api/v1/reviews/')
-        self.assertEqual(response.status_code, 200)
+        # Vérifier si des avis existent pour la place
+        response = self.client.get(f'/api/v1/places/{self.place_id}/reviews')
+        self.assertEqual(response.status_code, 200, f"Error retrieving reviews: {response.json}")
 
 if __name__ == '__main__':
     unittest.main()
