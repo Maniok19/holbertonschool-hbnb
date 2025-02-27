@@ -58,13 +58,13 @@ class TestAPI(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 201, f"Error creating review: {response.json}")
 
-    def test_create_user:
+    def test_create_user(self):
         pass
 
-    def test_create_place:
+    def test_create_place(self):
         pass
 
-    def test_create_amenity:
+    def test_create_amenity(self):
         pass
 
     # test create invalid data
@@ -78,13 +78,13 @@ class TestAPI(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
-    def test_create_user_invalid_data:
+    def test_create_user_invalid_data(self):
         pass
 
-    def test_create_place_invalid_data:
+    def test_create_place_invalid_data(self):
         pass
 
-    def test_create_amenity_invalid_data:
+    def test_create_amenity_invalid_data(self):
         pass
 
     # test get
