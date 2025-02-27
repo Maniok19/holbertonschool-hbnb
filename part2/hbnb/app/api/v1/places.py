@@ -22,19 +22,16 @@ class PlaceList(Resource):
     def get(self):
         """Get list of all places"""
         places = facade.get_all_places()
-        return [
-            {
-                'id': place.id,
-                'title': place.title,
-                'description': place.description,
-                'price': place.price,
-                'latitude': place.latitude,
-                'longitude': place.longitude,
-                'owner_id': place.owner_id,
-                'amenities': place.amenities
-            }
-            for place in places
-        ], 200
+        return [{
+            'id': place.id,
+            'title': place.title,
+            'description': place.description,
+            'price': place.price,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'owner_id': place.owner_id,
+            'amenities': place.amenities
+        } for place in places], 200
 
     @api.expect(place_model, validate=True)
     @api.response(201, 'Place successfully created')
@@ -46,19 +43,15 @@ class PlaceList(Resource):
         place_data = api.payload
 
         try:
-            # First check if the owner exists
             owner = facade.get_user(place_data['owner_id'])
             if not owner:
                 return {'error': 'Owner not found'}, 404
 
-            # Check for existing place with same title
             existing_place = facade.get_place_by_title(place_data['title'])
             if existing_place:
                 return {'error': 'Title already registered'}, 400
 
-            # Create new place if owner exists and title is unique
             new_place = facade.create_place(place_data)
-        
             return {
                 'id': new_place.id,
                 'title': new_place.title,
@@ -68,99 +61,28 @@ class PlaceList(Resource):
                 'longitude': new_place.longitude,
                 'owner_id': new_place.owner_id,
             }, 201
-
         except ValueError as e:
             return {'error': str(e)}, 400
 
-@api.route('/<place_id>')
-class PlaceResource(Resource):
-    @api.response(200, 'Place details retrieved successfully')
-    @api.response(404, 'Place not found')
-    def get(self, place_id):
-        """Get place details by ID"""
+@api.route('/<place_id>/amenities/<amenity_id>')
+class PlaceAmenityResource(Resource):
+    @api.response(200, "Amenity successfully added to place")
+    @api.response(404, "Place or Amenity not found")
+    @api.response(400, "Amenity already linked to place")
+    def post(self, place_id, amenity_id):
+        """Add an amenity to a place"""
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
         
-        owner = facade.get_user(place.owner_id)
-        owner_data = {
-            'id': owner.id,
-            'first_name': owner.first_name,
-            'last_name': owner.last_name,
-            'email': owner.email
-        } if owner else None
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {'error': 'Amenity not found'}, 404
 
-        # Get all amenities for the place
-        amenity_data = []
-        for amenity_id in place.amenities:
-            amenity = facade.get_amenity(amenity_id)
-            if amenity:
-                amenity_data.append({
-                    'id': amenity.id,
-                    'name': amenity.name
-                })
-
-        return {
-            'id': place.id,
-            'title': place.title,
-            'description': place.description,
-            'price': place.price,
-            'latitude': place.latitude,
-            'longitude': place.longitude,
-            'owner': owner_data,
-            'amenities': amenity_data
-        }, 200
-
-    @api.expect(place_model, validate=True)
-    @api.response(200, 'Place successfully updated')
-    @api.response(404, 'Place not found')
-    @api.response(400, 'Invalid input data')
-    def put(self, place_id):
-        """Update place details"""
-        place = facade.get_place(place_id)
-        if not place:
-            return {'error': 'Place not found'}, 404
-
-        update_data = api.payload
-
-        # Check if title is being changed and is already taken
-        if update_data.get('title') != place.title:
-            existing_place = facade.get_place_by_title(update_data['title'])
-            if existing_place:
-                return {'error': 'Title already registered'}, 400
-
-        try:
-            facade.update_place(place_id, update_data)
-            return {
-                'id': place.id,
-                'title': place.title,
-                'description': place.description,
-                'price': place.price,
-                'latitude': place.latitude,
-                'longitude': place.longitude,
-                'owner_id': place.owner_id,
-                'amenities': place.amenities
-            }, 200
-        except ValueError as e:
-            return {'error': str(e)}, 400
+        if amenity_id in place.amenities:
+            return {'error': 'Amenity already linked to place'}, 400
         
-@api.route('/<place_id>/reviews')
-class PlaceReviewList(Resource):
-    @api.response(200, 'List of reviews for the place retrieved successfully')
-    @api.response(404, 'Place not found')
-    def get(self, place_id):
-        """Get all reviews for a specific place"""
-        reviews = facade.get_reviews_by_place(place_id)
-        if reviews is None:  # Place not found
-            return {"error": "Place not found"}, 404
-            
-        # Return empty list if no reviews, but place exists
-        return [
-            {
-                'id': review.id,
-                'text': review.text,
-                'rating': review.rating,
-                'user_id': review.user_id
-            }
-            for review in reviews
-        ], 200
+        place.amenities.append(amenity_id)
+        facade.update_place(place_id, {'amenities': place.amenities})
+
+        return {"message": "Amenity successfully added to place"}, 200
