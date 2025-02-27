@@ -10,7 +10,9 @@ class TestAPI(unittest.TestCase):
         self.user_id = self.create_test_user()
         self.place_id = self.create_test_place()
         self.amenity_id = self.create_test_amenity()
+        # self.review_id = self.create_test_review()
 
+    # CREATE TEST
     def create_test_user(self):
         email = f"test_{uuid.uuid4()}@example.com"
         response = self.client.post('/api/v1/users/', json={
@@ -42,6 +44,11 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 201, f"Error creating amenity: {response.json}")
         return response.json.get("id")
 
+    def create_test_review(self):
+        pass
+
+    # test create
+
     def test_create_review(self):
         response = self.client.post('/api/v1/reviews/', json={
             "user_id": self.user_id,
@@ -51,6 +58,17 @@ class TestAPI(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 201, f"Error creating review: {response.json}")
 
+    def test_create_user:
+        pass
+
+    def test_create_place:
+        pass
+
+    def test_create_amenity:
+        pass
+
+    # test create invalid data
+
     def test_create_review_invalid_data(self):
         response = self.client.post('/api/v1/reviews/', json={
             "user_id": "",
@@ -59,6 +77,119 @@ class TestAPI(unittest.TestCase):
             "rating": 0
         })
         self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+
+    def test_create_user_invalid_data:
+        pass
+
+    def test_create_place_invalid_data:
+        pass
+
+    def test_create_amenity_invalid_data:
+        pass
+
+    # test get
+
+    def test_get_users(self):
+        pass
+
+    def test_get_places(self):
+        pass
+
+    def test_get_amenities(self):
+        pass
+
+    def test_get_reviews(self):
+        pass
+
+    # test get by id
+
+    def test_get_user_by_id(self):
+        pass
+
+    def test_get_place_by_id(self):
+        pass
+
+    def test_get_amenity_by_id(self):
+        pass
+
+    def test_get_review_by_id(self):
+        pass
+
+    # test get by id invalid data
+
+    def test_get_user_by_id_invalid_data(self):
+        pass
+
+    def test_get_place_by_id_invalid_data(self):
+        pass
+
+    def test_get_amenity_by_id_invalid_data(self):
+        pass
+
+    def test_get_review_by_id_invalid_data(self):
+        pass
+
+    # test update
+
+    def test_update_user(self):
+        pass
+
+    def test_update_place(self):
+        pass
+
+    def test_update_amenity(self):
+        pass
+
+    def test_update_review(self):
+        pass
+
+    # test update invalid data
+
+    def test_update_user_invalid_data(self):
+        pass
+
+    def test_update_place_invalid_data(self):
+        pass
+
+    def test_update_amenity_invalid_data(self):
+        pass
+
+    def test_update_review_invalid_data(self):
+        pass
+
+    # test delete
+
+    def test_delete_review(self):
+        pass
+
+    # special tests place
+
+    def test_create_place_invalid_owner_id(self):
+        pass
+
+    def test_create_place_invalid_price(self):
+        pass
+
+    def test_create_place_invalid_latitude(self):
+        pass
+
+    def test_create_place_invalid_longitude(self):
+        pass
+
+    # special tests user
+
+    def test_create_user_invalid_email(self):
+        pass
+
+    # special tests amenity
+
+    # special tests review
+
+    def test_create_review_invalid_user_id(self):
+        pass
+
+    def test_create_review_invalid_place_id(self):
+        pass
 
     def test_add_amenity_to_place(self):
         if self.amenity_id:
