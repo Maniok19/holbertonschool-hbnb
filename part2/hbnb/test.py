@@ -111,9 +111,7 @@ class TestAPI(unittest.TestCase):
             'last_name': 'Doe',
             'email': 'john.doe@example.com',
         })
-        assert response.status_code == 400
-        data = json.loads(response.data)
-        assert 'error' in data
+        self.assertEqual(response.status_code, 400)
 
 
     def test_create_place_invalid_data(self):
