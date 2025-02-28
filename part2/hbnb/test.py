@@ -245,9 +245,6 @@ class TestAPI(unittest.TestCase):
         response = self.client.post('/api/v1/places/', json={"title": "Test Place", "longitude": 200})
         self.assertEqual(response.status_code, 400)
 
-    def test_create_place_invalid_longitude(self):
-        pass
-
     # special tests user
 
     def test_create_user_invalid_email(self):
