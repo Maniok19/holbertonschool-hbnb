@@ -182,7 +182,9 @@ class TestAPI(unittest.TestCase):
     # test update one field
 
     def test_update_user_one_field(self):
-        response = self.client.put(f'/api/v1/users/{self.user_id}', json={"first_name": "Updated"})
+        response = self.client.put(f'/api/v1/users/{self.user_id}', json={
+            "first_name": "Updated"
+            })
         self.assertEqual(response.status_code, 200, f"Error updating user: {response.json}")
 
     def test_update_amenity_one_field(self):

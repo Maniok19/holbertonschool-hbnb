@@ -11,6 +11,8 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
+    # USER METHODS
+
     def create_user(self, user_data):
         """
         Create a new user after checking for duplicate email
@@ -27,8 +29,6 @@ class HBnBFacade:
         self.user_repo.add(user)
         return user
     
-    # USER METHODS
-
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
     
@@ -43,9 +43,7 @@ class HBnBFacade:
         return self.user_repo.get_all()
     
     def update_user(self, user_id, user_data):
-        user = self.get_user(user_id)
-        if user:
-            self.user_repo.update(user_id, user_data)
+        return self.user_repo.update(user_id, user_data)
 
     # AMENITY METHODS
 

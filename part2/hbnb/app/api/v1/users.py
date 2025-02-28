@@ -66,7 +66,7 @@ class UserResource(Resource):
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
     
     
-    @api.expect(user_model, validate=True)  
+    @api.expect(user_model, validate=False)
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
@@ -81,7 +81,7 @@ class UserResource(Resource):
         update_data = api.payload
 
         # Check if email is being changed and is already taken
-        if update_data.get('email') != user.email:
+        if 'email' in update_data and update_data.get('email') != user.email:
             existing_user = facade.get_user_by_email(update_data['email'])
             if existing_user:
                 return {'error': 'Email already registered'}, 400

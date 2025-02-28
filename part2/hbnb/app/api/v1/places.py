@@ -110,38 +110,37 @@ class PlaceResource(Resource):
             'amenities': amenity_data
         }, 200
 
-    @api.expect(place_model, validate=True)
+    @api.expect(place_model, validate=False)  # Changed to validate=False to allow partial updates
     @api.response(200, 'Place successfully updated')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update place details"""
+        # Get the place first
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
 
+        # Get updated data from request
         update_data = api.payload
 
-        # Check if title is being changed and is already taken
-        if update_data.get('title') != place.title:
-            existing_place = facade.get_place_by_title(update_data['title'])
-            if existing_place:
-                return {'error': 'Title already registered'}, 400
-
+        # Update place
         try:
             facade.update_place(place_id, update_data)
+            updated_place = facade.get_place(place_id)  # Get updated place
             return {
-                'id': place.id,
-                'title': place.title,
-                'description': place.description,
-                'price': place.price,
-                'latitude': place.latitude,
-                'longitude': place.longitude,
-                'owner_id': place.owner_id,
-                'amenities': place.amenities
+                'id': updated_place.id,
+                'title': updated_place.title,
+                'description': updated_place.description,
+                'price': updated_place.price,
+                'latitude': updated_place.latitude,
+                'longitude': updated_place.longitude,
+                'owner_id': updated_place.owner_id,
+                'amenities': updated_place.amenities
             }, 200
         except ValueError as e:
             return {'error': str(e)}, 400
+
         
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
