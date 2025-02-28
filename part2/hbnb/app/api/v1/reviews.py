@@ -14,7 +14,7 @@ review_model = api.model('Review', {
 
 @api.route('/')
 class ReviewList(Resource):
-    @api.expect(review_model)
+    @api.expect(review_model, validate=True)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     @api.response(404, 'User or Place not found')
@@ -64,7 +64,7 @@ class ReviewList(Resource):
         except (ValueError, KeyError) as e:
             return {"error": str(e)}, 400
         except Exception as e:
-            return {"error": "Internal server error", "details": str(e)}, 500
+            return {str(e)}, 500
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
@@ -97,7 +97,7 @@ class ReviewResource(Resource):
             'place_id': review.place_id
         }, 200
 
-    @api.expect(review_model)
+    @api.expect(review_model, validate=True)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')

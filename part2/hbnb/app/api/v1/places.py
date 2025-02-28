@@ -110,7 +110,7 @@ class PlaceResource(Resource):
             'amenities': amenity_data
         }, 200
 
-    @api.expect(place_model, validate=False)  # Changed to validate=False to allow partial updates
+    @api.expect(place_model, validate=True)  # Changed to validate=False to allow partial updates
     @api.response(200, 'Place successfully updated')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
