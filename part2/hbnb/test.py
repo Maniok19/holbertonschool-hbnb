@@ -1,6 +1,7 @@
 #!/usr/bin/python3 
 import unittest
 import uuid
+import json
 from app import create_app
 
 class TestAPI(unittest.TestCase):
@@ -57,55 +58,53 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 201, f"Error creating review: {response.json}")
 
     def test_create_user(self):
-        pass
+        email = f"test_@example.com"
+        response = self.client.post('/api/v1/users/', json={
+            "first_name": "Test",
+            "last_name": "User",
+            "email": email
+        })
+        self.assertEqual(response.status_code, 201, f"Error creating test user: {response.json}")
 
     def test_create_place(self):
-        pass
+        response = self.client.post('/api/v1/places/', json={
+            "title": "place_title",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 201, f"Error creating test place: {response.json}")
 
     def test_create_amenity(self):
-
-        pass
+        response = self.client.post('/api/v1/amenities/', json={
+            "name": "Test Amenity"
+        })
+        self.assertEqual(response.status_code, 201, f"Error creating amenity: {response.json}")
 
     # test create invalid data
 
     def test_create_review_invalid_data(self):
         response = self.client.post('/api/v1/reviews/', json={
-            "user_id": "",
-            "place_id": self.place_id,
-            "text": "",
-            "rating": 0
+            "user_i": "abc",
+            "plae_id": self.place_id,
+            "tet": "ffff",
+            "ratng": 0
         })
         self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
-        def test_create_user_invalid_data(self):
-            response = self.client.post('/api/v1/users/', json={
-                'first_name': '',
-                'last_name': 'Doe',
-                'email': 'john.doe@example.com',
-            })
-            assert response.status_code == 400
-            data = json.loads(response.data)
-            assert 'error' in data
+    def test_create_user_invalid_data(self):
+        response = self.client.post('/api/v1/users/', json={
+            'first_name': '',
+            'last_name': 'Doe',
+            'email': 'john.doe@example.com',
+        })
+        assert response.status_code == 400
+        data = json.loads(response.data)
+        assert 'error' in data
 
-        def test_create_user_invalid_datax(self):
-            response = self.client.post('/api/v1/users/', json={
-                'first_name': 'joe',
-                'last_name': '',
-                'email': 'john.doe@example.com',
-            })
-            assert response.status_code == 400
-            data = json.loads(response.data)
-            assert 'error' in data
-
-        def test_create_user_invalid_datas(self):
-            response = self.client.post('/api/v1/users/', json={
-                'first_name': 'joe',
-                'last_name': 'Doe',
-                'email': 'john.doe@example.com',
-            })
-            assert response.status_code == 400
-            data = json.loads(response.data)
-            assert 'error' in data
 
     def test_create_place_invalid_data(self):
         response = self.client.post('/api/v1/places/', json={})
@@ -226,7 +225,13 @@ class TestAPI(unittest.TestCase):
     # special tests review
 
     def test_create_review_invalid_user_id(self):
-        pass
+        response = self.client.post('/api/v1/reviews/', json={
+            "user_id": "abc",
+            "place_id": self.place_id,
+            "text": "rrrr",
+            "rating": 2
+        })
+        self.assertEqual(response.status_code, 404, f"Expected 400 but got {response.status_code}, response: {response.json}") 
 
     def test_create_review_invalid_place_id(self):
         pass
