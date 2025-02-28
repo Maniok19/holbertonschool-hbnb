@@ -239,7 +239,8 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_create_place_invalid_price(self):
-        pass
+        response = self.client.post('/api/v1/places/', json={"title": "Test Place", "price": -10})
+        self.assertEqual(response.status_code, 400)
 
     def test_create_place_invalid_longitude(self):
         response = self.client.post('/api/v1/places/', json={"title": "Test Place", "longitude": 200})
