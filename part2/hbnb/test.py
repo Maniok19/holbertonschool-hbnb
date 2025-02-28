@@ -253,19 +253,43 @@ class TestAPI(unittest.TestCase):
 
     # Test updating a user with invalid data
     def test_update_user_invalid_data(self):
-        pass
+        response = self.client.put(f'/api/v1/users/{self.user_id}', json={
+            "first_name": "",
+            "last_name": "User",
+            "email": "abc@abc.abc"
+        })
+        self.assertEqual(response.status_code, 400)
 
     # Test updating a place with invalid data
     def test_update_place_invalid_data(self):
-        pass
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "tite": "",
+            "price": -100,
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 400)
 
     # Test updating an amenity with invalid data
     def test_update_amenity_invalid_data(self):
-        pass
+        response = self.client.put(f'/api/v1/amenities/{self.amenity_id}', json={
+            "nae": ""
+        })
+        self.assertEqual(response.status_code, 400)
 
     # Test updating a review with invalid data
     def test_update_review_invalid_data(self):
-        pass
+        response = self.client.put(f'/api/v1/reviews/{self.review_id}', json={
+            "uer_id": "",
+            "place_id": self.place_id,
+            "text": "Great place to stay!",
+            "rating": 5
+        })
+        self.assertEqual(response.status_code, 400)
 
     # Test deleting a review
     def test_delete_review(self):
