@@ -192,13 +192,31 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_update_place(self):
-        pass
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "Test Place",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 200)
 
     def test_update_amenity(self):
-        pass
+        response = self.client.put(f'/api/v1/amenities/{self.amenity_id}', json={
+            "name": "Test Amenity"
+        })
+        self.assertEqual(response.status_code, 200)
 
     def test_update_review(self):
-        pass
+        response = self.client.put(f'/api/v1/reviews/{self.review_id}', json={
+            "user_id": self.user_id,
+            "place_id": self.place_id,
+            "text": "Great place to stay!",
+            "rating": 5
+        })
+        self.assertEqual(response.status_code, 200)
 
     # test update invalid data
 
