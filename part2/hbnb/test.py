@@ -108,46 +108,57 @@ class TestAPI(unittest.TestCase):
             assert 'error' in data
 
     def test_create_place_invalid_data(self):
-
-        pass
+        response = self.client.post('/api/v1/places/', json={})
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+        
 
     def test_create_amenity_invalid_data(self):
-
-        pass
+        response = self.client.post('/api/v1/amenities/', json={})
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+        
 
     # test get
 
     def test_get_users(self):
-        pass
+        response = self.client.get('/api/v1/users/')
+        self.assertEqual(response.status_code, 200, f"Error retrieving users: {response.json}")
 
     def test_get_places(self):
-        pass
+        response = self.client.get('/api/v1/places/')
+        self.assertEqual(response.status_code, 200, f"Error retrieving places: {response.json}")
 
     def test_get_amenities(self):
-        pass
+        response = self.client.get('/api/v1/amenities/')
+        self.assertEqual(response.status_code, 200, f"Error retrieving amenities: {response.json}")
 
     def test_get_reviews(self):
-        pass
+        response = self.client.get('/api/v1/reviews/')
+        self.assertEqual(response.status_code, 200, f"Error retrieving reviews: {response.json}")
 
     # test get by id
 
     def test_get_user_by_id(self):
-        pass
+        response = self.client.get(f'/api/v1/users/{self.user_id}')
+        self.assertEqual(response.status_code, 200, f"Error retrieving user: {response.json}")
 
     def test_get_place_by_id(self):
-        pass
+        response = self.client.get(f'/api/v1/places/{self.place_id}')
+        self.assertEqual(response.status_code, 200, f"Error retrieving place: {response.json}")
 
     def test_get_amenity_by_id(self):
-        pass
+        response = self.client.get(f'/api/v1/amenities/{self.amenity_id}')
+        self.assertEqual(response.status_code, 200, f"Error retrieving amenity: {response.json}")
 
     def test_get_review_by_id(self):
-        pass
+        response = self.client.get(f'/api/v1/reviews/{self.review_id}')
+        self.assertEqual(response.status_code, 200, f"Error retrieving review: {response.json}")
 
 
     # test get by id invalid data
 
     def test_get_user_by_id_invalid_data(self):
-        pass
+        response = self.client.get('/api/v1/users/invalid_id')
+        self.assertEqual(response.status_code, 404)
 
     def test_get_place_by_id_invalid_data(self):
         pass
