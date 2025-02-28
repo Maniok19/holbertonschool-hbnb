@@ -166,17 +166,20 @@ class TestAPI(unittest.TestCase):
     # test get by id invalid data
 
     def test_get_user_by_id_invalid_data(self):
-        response = self.client.get('/api/v1/users/invalid_id')
-        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/api/v1/users/gyuygkuyv')
+        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
 
     def test_get_place_by_id_invalid_data(self):
-        pass
+        response = self.client.get('/api/v1/places/invalid_id')
+        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
 
     def test_get_amenity_by_id_invalid_data(self):
-        pass
+        response = self.client.get('/api/v1/amenities/invalid_id')
+        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
 
     def test_get_review_by_id_invalid_data(self):
-        pass
+        response = self.client.get('/api/v1/reviews/invalid_id')
+        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
 
     # test update
 
@@ -185,7 +188,7 @@ class TestAPI(unittest.TestCase):
 
     def test_update_place(self):
         pass
-
+    
     def test_update_amenity(self):
         pass
 
