@@ -179,11 +179,31 @@ class TestAPI(unittest.TestCase):
         response = self.client.get('/api/v1/reviews/invalid_id')
         self.assertEqual(response.status_code, 404)
 
-    # test update
+    # test update one field
 
-    def test_update_user(self):
+    def test_update_user_one_field(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={"first_name": "Updated"})
         self.assertEqual(response.status_code, 200, f"Error updating user: {response.json}")
+
+    def test_update_amenity_one_field(self):
+        response = self.client.put(f'/api/v1/amenities/{self.amenity_id}', json={
+            "name": "Test Amenity"
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_review_one_field(self):
+        response = self.client.put(f'/api/v1/reviews/{self.review_id}', json={
+            "text": "Great place to stay!"
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_place_one_field(self):
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "Test Place"
+        })
+        self.assertEqual(response.status_code, 200)
+
+    # test update
 
     def test_update_place(self):
         response = self.client.put(f'/api/v1/places/{self.place_id}', json={
@@ -197,18 +217,26 @@ class TestAPI(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 200)
 
-    def test_update_amenity(self):
-        response = self.client.put(f'/api/v1/amenities/{self.amenity_id}', json={
-            "name": "Test Amenity"
-        })
-        self.assertEqual(response.status_code, 200)
-
     def test_update_review(self):
         response = self.client.put(f'/api/v1/reviews/{self.review_id}', json={
             "user_id": self.user_id,
             "place_id": self.place_id,
             "text": "Great place to stay!",
             "rating": 5
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_amenity(self):
+        response = self.client.put(f'/api/v1/amenities/{self.amenity_id}', json={
+            "name": "Test Amenity"
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_user(self):
+        response = self.client.put(f'/api/v1/users/{self.user_id}', json={
+            "first_name": "Test",
+            "last_name": "User",
+            "email": "abc@abc.abc"
         })
         self.assertEqual(response.status_code, 200)
 
