@@ -183,7 +183,7 @@ class TestAPI(unittest.TestCase):
 
     # test update
 
-     def test_update_user(self):
+    def test_update_user(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={"first_name": "Updated"})
         self.assertEqual(response.status_code, 200, f"Error updating user: {response.json}")
 
@@ -231,7 +231,8 @@ class TestAPI(unittest.TestCase):
     # test delete
 
     def test_delete_review(self):
-        pass
+        response = self.client.delete(f'/api/v1/reviews/{self.review_id}')
+        self.assertEqual(response.status_code, 200)
 
     # special tests place
 
@@ -269,7 +270,14 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 404, f"Expected 400 but got {response.status_code}, response: {response.json}") 
 
     def test_create_review_invalid_place_id(self):
-        pass
+        response = self.client.post('/api/v1/reviews/', json={
+            "user_id": self.user_id,
+            "place_id": "abc",
+            "text": "rrrr",
+            "rating": 2
+        })
+        self.assertEqual(response.status_code, 404, f"Expected 400 but got {response.status_code}, response: {response.json}")
+        
 
     def test_get_reviews(self):
         response = self.client.get('/api/v1/reviews/')
