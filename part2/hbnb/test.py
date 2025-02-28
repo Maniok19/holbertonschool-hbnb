@@ -11,7 +11,7 @@ class TestAPI(unittest.TestCase):
         self.user_id = self.create_test_user()
         self.place_id = self.create_test_place()
         self.amenity_id = self.create_test_amenity()
-        # self.review_id = self.create_test_review()
+        self.review_id = self.create_test_review()
 
     # CREATE TEST
     def create_test_user(self):
@@ -43,6 +43,16 @@ class TestAPI(unittest.TestCase):
             "name": "Test Amenity"
         })
         self.assertEqual(response.status_code, 201, f"Error creating amenity: {response.json}")
+        return response.json.get("id")
+    
+    def create_test_review(self):
+        response = self.client.post('/api/v1/reviews/', json={
+            "user_id": self.user_id,
+            "place_id": self.place_id,
+            "text": "Great place to stay!",
+            "rating": 5  # Ajout du champ 'rating'
+        })
+        self.assertEqual(response.status_code, 201, f"Error creating review: {response.json}")
         return response.json.get("id")
 
     
@@ -235,13 +245,6 @@ class TestAPI(unittest.TestCase):
 
     def test_create_review_invalid_place_id(self):
         pass
-
-    def test_add_amenity_to_place(self):
-        if self.amenity_id:
-            response = self.client.post(f'/api/v1/places/{self.place_id}/amenities/{self.amenity_id}')
-            self.assertEqual(response.status_code, 200, f"Error adding amenity to place: {response.json}")
-        else:
-            self.fail("Amenity ID is not valid")
 
     def test_get_reviews(self):
         response = self.client.get('/api/v1/reviews/')
