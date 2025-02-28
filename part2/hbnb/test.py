@@ -183,7 +183,7 @@ class TestAPI(unittest.TestCase):
 
     # test update
 
-     def test_update_user(self):
+    def test_update_user(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={"first_name": "Updated"})
         self.assertEqual(response.status_code, 200, f"Error updating user: {response.json}")
 
