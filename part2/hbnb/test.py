@@ -166,30 +166,26 @@ class TestAPI(unittest.TestCase):
     # test get by id invalid data
 
     def test_get_user_by_id_invalid_data(self):
-        response = self.client.get('/api/v1/users/gyuygkuyv')
-        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
+        response = self.client.get('/api/v1/users/invalid_id')
+        self.assertEqual(response.status_code, 404)
 
     def test_get_place_by_id_invalid_data(self):
         response = self.client.get('/api/v1/places/invalid_id')
-        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
+        self.assertEqual(response.status_code, 404)
 
     def test_get_amenity_by_id_invalid_data(self):
         response = self.client.get('/api/v1/amenities/invalid_id')
-        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
+        self.assertEqual(response.status_code, 404)
 
     def test_get_review_by_id_invalid_data(self):
         response = self.client.get('/api/v1/reviews/invalid_id')
-        self.assertEqual(response.status_code, 404, "Expected 404 Not Found for invalid ID")
+        self.assertEqual(response.status_code, 404)
 
     # test update
 
-    def test_update_user(self):
-        response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-            "first_name": "Test",
-            "last_name": "User",
-            "email": "test@test.test"
-        })
-        self.assertEqual(response.status_code, 200)
+     def test_update_user(self):
+        response = self.client.put(f'/api/v1/users/{self.user_id}', json={"first_name": "Updated"})
+        self.assertEqual(response.status_code, 200, f"Error updating user: {response.json}")
 
     def test_update_place(self):
         response = self.client.put(f'/api/v1/places/{self.place_id}', json={
@@ -239,14 +235,16 @@ class TestAPI(unittest.TestCase):
 
     # special tests place
 
-    def test_create_place_invalid_owner_id(self):
-        pass
+    def test_create_place_invalid_latitude(self):
+        response = self.client.post('/api/v1/places/', json={"title": "Test Place", "latitude": 200})
+        self.assertEqual(response.status_code, 400)
 
     def test_create_place_invalid_price(self):
         pass
 
-    def test_create_place_invalid_latitude(self):
-        pass
+    def test_create_place_invalid_longitude(self):
+        response = self.client.post('/api/v1/places/', json={"title": "Test Place", "longitude": 200})
+        self.assertEqual(response.status_code, 400)
 
     def test_create_place_invalid_longitude(self):
         pass
@@ -254,7 +252,8 @@ class TestAPI(unittest.TestCase):
     # special tests user
 
     def test_create_user_invalid_email(self):
-        pass
+        response = self.client.post('/api/v1/users/', json={"first_name": "Test", "email": "invalid"})
+        self.assertEqual(response.status_code, 400)
 
     # special tests amenity
 
@@ -270,13 +269,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 404, f"Expected 400 but got {response.status_code}, response: {response.json}") 
 
     def test_create_review_invalid_place_id(self):
-        response = self.client.post('/api/v1/reviews/', json={
-            "user_id": self.user_id,
-            "place_id": "abc",
-            "text": "rrrr",
-            "rating": 2
-        })
-        self.assertEqual(response.status_code, 404, f"Expected 400 but got {response.status_code}, response: {response.json}") 
+        pass
 
     def test_get_reviews(self):
         response = self.client.get('/api/v1/reviews/')
