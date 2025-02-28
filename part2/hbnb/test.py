@@ -188,7 +188,7 @@ class TestAPI(unittest.TestCase):
 
     def test_update_place(self):
         pass
-    
+
     def test_update_amenity(self):
         pass
 
@@ -247,7 +247,13 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 404, f"Expected 400 but got {response.status_code}, response: {response.json}") 
 
     def test_create_review_invalid_place_id(self):
-        pass
+        response = self.client.post('/api/v1/reviews/', json={
+            "user_id": self.user_id,
+            "place_id": "abc",
+            "text": "rrrr",
+            "rating": 2
+        })
+        self.assertEqual(response.status_code, 404, f"Expected 400 but got {response.status_code}, response: {response.json}") 
 
     def test_get_reviews(self):
         response = self.client.get('/api/v1/reviews/')
