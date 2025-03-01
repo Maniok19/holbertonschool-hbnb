@@ -13,4 +13,6 @@ class Amenity(BaseModel):
     def checking(self):
         """Validation des données"""
         if not self.name or len(self.name) > 100:
-            raise ValueError("Le nom de la commodité est requis et doit être ≤ 100 caractères")
+            raise ValueError(
+                "Le nom de commodité est requis et doit être ≤ 100 caractères"
+                )

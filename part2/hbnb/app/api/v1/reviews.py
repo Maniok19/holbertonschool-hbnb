@@ -27,7 +27,7 @@ class ReviewList(Resource):
         """Register a new review"""
         try:
             review_data = api.payload
-            
+
             # Validate required fields
             required_fields = ['text', 'rating', 'user_id', 'place_id']
             for field in required_fields:
@@ -145,7 +145,7 @@ class ReviewResource(Resource):
             place = facade.get_place(update_data['place_id'])
             if not place:
                 return {'error': 'Place not found'}, 404
-            
+
             # Update the review
             facade.update_review(review_id, update_data)
             updated_review = facade.get_review(review_id)
