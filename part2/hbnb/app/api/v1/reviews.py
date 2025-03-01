@@ -32,12 +32,6 @@ class ReviewList(Resource):
                 if not review_data[field]:
                     return {'error': f'Field {field} cannot be empty'}, 400
 
-            # Validate text field
-            if not isinstance(review_data['text'], str):
-                return {'error': 'Text must be a string'}, 400
-            if len(review_data['text'].strip()) == 0:
-                return {'error': 'Text cannot be empty'}, 400
-
             # Check if user exists
             user = facade.get_user(review_data['user_id'])
             if not user:
@@ -47,10 +41,6 @@ class ReviewList(Resource):
             place = facade.get_place(review_data['place_id'])
             if not place:
                 return {'error': 'Place not found'}, 404
-
-            # Validate rating range
-            if not isinstance(review_data['rating'], int) or not (1 <= review_data['rating'] <= 5):
-                return {'error': 'Rating must be an integer between 1 and 5'}, 400
 
             new_review = facade.create_review(review_data)
             return {
@@ -63,8 +53,6 @@ class ReviewList(Resource):
 
         except (ValueError, KeyError) as e:
             return {"error": str(e)}, 400
-        except Exception as e:
-            return {str(e)}, 500
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
@@ -111,15 +99,7 @@ class ReviewResource(Resource):
 
             update_data = api.payload
 
-            # Validate required fields
-            if 'rating' in update_data and not (isinstance(update_data['rating'], int) and 1 <= update_data['rating'] <= 5):
-                return {'error': 'Rating must be an integer between 1 and 5'}, 400
-
-            if 'text' in update_data:
-                if not isinstance(update_data['text'], str) or len(update_data['text'].strip()) == 0:
-                    return {'error': 'Text must be a non-empty string'}, 400
-
-            # Update the review using BaseModel's update method
+            # Update the review
             facade.update_review(review_id, update_data)
             updated_review = facade.get_review(review_id)
 
@@ -133,8 +113,6 @@ class ReviewResource(Resource):
 
         except ValueError as e:
             return {'error': str(e)}, 400
-        except Exception as e:
-            return {'error': 'Internal server error', 'details': str(e)}, 500
         
     @api.response(204, 'Review deleted successfully')
     @api.response(404, 'Review not found')
@@ -156,7 +134,6 @@ class PlaceReviewList(Resource):
         if reviews is None:  # Place not found
             return {"error": "Place not found"}, 404
             
-        # Return empty list if no reviews, but place exists
         return [
             {
                 'id': review.id,

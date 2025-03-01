@@ -23,7 +23,7 @@ class AmenityList(Resource):
             for amenity in amenities
         ], 200
 
-    @api.expect(amenity_model)
+    @api.expect(amenity_model, validate=True)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
@@ -34,7 +34,7 @@ class AmenityList(Resource):
             """new_amenity.validate()"""
             facade.create_amenity(new_amenity)
             return {
-                 "id": new_amenity.id,
+                "id": new_amenity.id,
                 "name": new_amenity.name
             }, 201
         except (ValueError, KeyError) as e:
