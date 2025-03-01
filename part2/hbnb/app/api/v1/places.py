@@ -55,7 +55,7 @@ class PlaceList(Resource):
             if existing_place:
                 return {'error': 'Title already registered'}, 400
 
-            # Create new place if owner exists and title is unique
+            # Ervything is fine, create the place
             new_place = facade.create_place(place_data)
         
             return {
