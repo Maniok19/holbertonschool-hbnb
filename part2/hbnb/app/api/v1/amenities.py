@@ -9,6 +9,7 @@ amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
 })
 
+
 @api.route('/')
 class AmenityList(Resource):
     @api.response(200, 'List of amenities retrieved successfully')
@@ -54,7 +55,7 @@ class AmenityResource(Resource):
                 "id": amenity.id,
                 "name": amenity.name
             }, 200
-    
+
     @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
@@ -65,11 +66,11 @@ class AmenityResource(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {"error": "Commodité non trouvée"}, 404
-        
+
         if "name" in data:
             amenity.name = data["name"]
         else:
             return {"error": "Données invalides"}, 400
-        
+
         facade.update_amenity(amenity, data)
         return {"message": "Amenity updated successfully"}, 200
