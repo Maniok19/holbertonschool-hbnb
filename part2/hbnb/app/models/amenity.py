@@ -1,7 +1,8 @@
- #!/usr/bin/env python3
+#!/usr/bin/env python3
 """ Modèle de données pour les commodités """
 
 from app.models.base import BaseModel
+
 
 class Amenity(BaseModel):
     """Classe représentant une commodité"""
@@ -12,4 +13,6 @@ class Amenity(BaseModel):
     def validate(self):
         """Validation des données"""
         if not self.name or len(self.name) > 100:
-            raise ValueError("Le nom de la commodité est requis et doit être ≤ 100 caractères")
+            raise ValueError(
+                "Le nom la commodité est requis et doit être ≤ 100 caractères"
+            )
