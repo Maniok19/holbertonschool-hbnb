@@ -116,18 +116,29 @@ class PlaceResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update place details"""
-        # Get the place first
-        place = facade.get_place(place_id)
-        if not place:
-            return {'error': 'Place not found'}, 404
-
-        # Get updated data from request
-        update_data = api.payload
-
-        # Update place
         try:
+        # Get the place first
+            place = facade.get_place(place_id)
+            if not place:
+                return {'error': 'Place not found'}, 404
+
+            # Get updated data from request
+            update_data = api.payload
+        
+            # First check if the owner exists
+            owner = facade.get_user(update_data['owner_id'])
+            if not owner:
+                return {'error': 'Owner not found'}, 404
+
+            # Check for existing place with same title
+            existing_place = facade.get_place_by_title(update_data['title'])
+            if existing_place:
+                return {'error': 'Title already registered'}, 400
+            
+            # Go for update
+
             facade.update_place(place_id, update_data)
-            updated_place = facade.get_place(place_id)  # Get updated place
+            updated_place = facade.get_place(place_id)
             return {
                 'id': updated_place.id,
                 'title': updated_place.title,

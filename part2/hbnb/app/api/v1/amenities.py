@@ -1,6 +1,5 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from app.models.amenity import Amenity
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -28,11 +27,11 @@ class AmenityList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new amenity"""
-        data = api.payload
+        
         try:
-            new_amenity = Amenity(name=data['name'])
-            """new_amenity.validate()"""
-            facade.create_amenity(new_amenity)
+            amenity_data = api.payload
+            new_amenity = facade.create_amenity(amenity_data)
+            
             return {
                 "id": new_amenity.id,
                 "name": new_amenity.name

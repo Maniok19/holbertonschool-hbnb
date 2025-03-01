@@ -43,12 +43,18 @@ class HBnBFacade:
         return self.user_repo.get_all()
     
     def update_user(self, user_id, user_data):
-        return self.user_repo.update(user_id, user_data)
+        user = User(**user_data)
+        user.checking()
+        self.user_repo.update(user_id, user_data)
+        return user
 
     # AMENITY METHODS
 
     def create_amenity(self, amenity_data):
-        return self.amenity_repo.add(amenity_data)
+        amenity = Amenity(**amenity_data)
+        amenity.checking()
+        self.amenity_repo.add(amenity)
+        return amenity
 
     def get_amenity(self, amenity_id):
         return self.amenity_repo.get(amenity_id)
@@ -57,7 +63,10 @@ class HBnBFacade:
         return self.amenity_repo.get_all()
 
     def update_amenity(self, amenity_id, amenity_data):
-        return self.amenity_repo.update(amenity_id, amenity_data)
+        amenity = Amenity(**amenity_data)
+        amenity.checking()
+        self.amenity_repo.update(amenity_id, amenity_data)
+        return amenity
 
     # REVIEW METHODS
 
@@ -90,7 +99,10 @@ class HBnBFacade:
         ]
 
     def update_review(self, review_id, review_data):
-        return self.review_repo.update(review_id, review_data)
+        review = Review(**review_data)
+        review.checking()
+        self.review_repo.update(review_id, review_data)
+        return review
 
     def delete_review(self, review_id):
         return self.review_repo.delete(review_id)
@@ -118,9 +130,19 @@ class HBnBFacade:
     def get_all_places(self):
         return self.place_repo.get_all()
 
-
     def update_place(self, place_id, place_data):
-        return self.place_repo.update(place_id, place_data)
+        amenities = place_data.pop('amenities', [])
+        
+        # Create and validate place
+        place = Place(**place_data)
+        place.checking()
+        
+        # Add amenities back to place
+        place.amenities = amenities
+        
+        # Save place to repository
+        self.place_repo.update(place_id, place_data)
+        return place
     
     def get_place_by_title(self, title):
         return next(

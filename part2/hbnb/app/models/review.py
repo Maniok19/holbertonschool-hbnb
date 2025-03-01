@@ -1,5 +1,3 @@
- #!/usr/bin/env python3
-
 from app.models.base import BaseModel
 
 class Review(BaseModel):
@@ -15,7 +13,7 @@ class Review(BaseModel):
         if self.text is None or not isinstance(self.text, str):
             raise ValueError("Le texte doit être une chaîne de caractères.")
         
-        if self.rating is None or not (0 <= self.rating <= 5):
+        if self.rating is None or not (0 < self.rating <= 5):
             raise ValueError("La note doit être un nombre entier entre 0 et 5.")
         
         if self.place_id is None or not isinstance(self.place_id, str):
