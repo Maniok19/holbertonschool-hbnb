@@ -7,10 +7,14 @@ api = Namespace('reviews', description='Review operations')
 # Define the review model for input validation and documentation
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
+    'rating': fields.Integer(
+        required=True,
+        description='Rating of the place (1-5)'
+    ),
     'user_id': fields.String(required=True, description='ID of the user'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
+
 
 @api.route('/')
 class ReviewList(Resource):
@@ -23,7 +27,7 @@ class ReviewList(Resource):
         """Register a new review"""
         try:
             review_data = api.payload
-            
+
             # Validate required fields
             required_fields = ['text', 'rating', 'user_id', 'place_id']
             for field in required_fields:
@@ -58,7 +62,7 @@ class ReviewList(Resource):
     def get(self):
         """Retrieve a list of all reviews"""
         reviews = facade.get_all_reviews()
-			
+
         return [
             {
                 'id': review.id,
@@ -67,6 +71,7 @@ class ReviewList(Resource):
             }
             for review in reviews
         ], 200
+
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
@@ -111,7 +116,9 @@ class ReviewResource(Resource):
 
         # Validate rating
         if 'rating' in data:
-            if not isinstance(data['rating'], int) or data['rating'] < 1 or data['rating'] > 5:
+            if (not isinstance(data['rating'], int) or
+                    data['rating'] < 1 or
+                    data['rating'] > 5):
                 return {'error': 'Rating must be between 1 and 5'}, 400
 
         try:
@@ -143,7 +150,7 @@ class ReviewResource(Resource):
 
         except ValueError as e:
             return {'error': str(e)}, 400
-        
+
     @api.response(204, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
@@ -152,7 +159,8 @@ class ReviewResource(Resource):
         if not review:
             return {"error": "Review not found"}, 404
         facade.delete_review(review_id)
-        return {"message" : "Review deleted successfully"}, 200
+        return {"message": "Review deleted successfully"}, 200
+
 
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
@@ -163,7 +171,7 @@ class PlaceReviewList(Resource):
         reviews = facade.get_reviews_by_place(place_id)
         if reviews is None:  # Place not found
             return {"error": "Place not found"}, 404
-            
+
         return [
             {
                 'id': review.id,
