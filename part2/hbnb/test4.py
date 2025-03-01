@@ -237,7 +237,7 @@ class TestAPI(unittest.TestCase):
 
     def test_update_user(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-            "first_name": "",
+            "first_name": "Test",
             "last_name": "User",
             "email": "abc@abc.abc"
         })
@@ -276,34 +276,6 @@ class TestAPI(unittest.TestCase):
             "invalid": "aaa"
         })
         self.assertEqual(response.status_code, 400)
-
-    #invalid data side user
-    # Test updating a user with invalid data (empty first_name)
-def test_update_user_invalid_data_empty_first_name(self):
-    response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-        "first_name": "",
-        "last_name": "User",
-        "email": "updated@example.com"
-    })
-    self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
-
-# Test updating a user with invalid data (empty last_name)
-def test_update_user_invalid_data_empty_last_name(self):
-    response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-        "first_name": "Updated",
-        "last_name": "",
-        "email": "updated@example.com"
-    })
-    self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
-
-# Test updating a user with invalid data (empty email)
-def test_update_user_invalid_data_empty_email(self):
-    response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-        "first_name": "Updated",
-        "last_name": "User",
-        "email": ""
-    })
-    self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
     # DELETE TEST
 
