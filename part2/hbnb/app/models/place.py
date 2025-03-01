@@ -1,7 +1,9 @@
 from app.models.base import BaseModel
 
+
 class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner_id):
+    def __init__(
+            self, title, description, price, latitude, longitude, owner_id):
         super().__init__()
         self.title = title
         self.description = description
@@ -19,15 +21,24 @@ class Place(BaseModel):
             raise ValueError("La latitude doit être comprise entre -90 et 90.")
 
         if self.longitude is None or not (-180 <= self.longitude <= 180):
-            raise ValueError("La longitude doit être comprise entre -180 et 180.")
+            raise ValueError(
+                "La longitude doit être comprise entre -180 et 180."
+            )
 
         if not isinstance(self.description, str) or len(self.description) < 10:
-            raise ValueError("La description doit être une chaîne de caractères d'au moins 10 caractères.")
+            raise ValueError(
+                "La description doit être une chaîne de 10 caractères minimum."
+            )
 
-        if not isinstance(self.owner_id, str) or len(self.owner_id.strip()) == 0:
-            raise ValueError("L'owner doit être une chaîne de caractères non vide.")
+        if not (isinstance(self.owner_id, str) or
+                len(self.owner_id.strip()) == 0):
+            raise ValueError(
+                "L'owner doit être une chaîne de caractères non vide."
+            )
 
         if not isinstance(self.title, str) or len(self.title.strip()) < 3:
-            raise ValueError("Le titre doit être une chaîne de caractères d'au moins 3 caractères.")
+            raise ValueError(
+                "Le titre doit être une chaîne de 3 caractères minimum."
+            )
 
         return True
