@@ -12,9 +12,13 @@ class User(BaseModel):
 
     def checking(self):
         if not self.first_name or len(self.first_name) > 50:
-            raise ValueError("First name is required and must be <= 50 characters")
+            raise ValueError(
+                "First name is required and must be <= 50 characters"
+            )
         if not self.last_name or len(self.last_name) > 50:
-            raise ValueError("Last name is required and must be <= 50 characters")
+            raise ValueError(
+                "Last name is required and must be <= 50 characters"
+            )
         if not self.email or not self.is_valid_email(self.email):
             raise ValueError("Valid email is required")
 
