@@ -9,11 +9,22 @@ place_model = api.model('Place', {
     'title': fields.String(required=True, description='Title of the place'),
     'description': fields.String(description='Description of the place'),
     'price': fields.Float(required=True, description='Price per night'),
-    'latitude': fields.Float(required=True, description='Latitude of the place'),
-    'longitude': fields.Float(required=True, description='Longitude of the place'),
+    'latitude': fields.Float(
+        required=True,
+        description='Latitude of the place'
+    ),
+    'longitude': fields.Float(
+        required=True,
+        description='Longitude of the place'
+    ),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities IDs")
+    'amenities': fields.List(
+        fields.String,
+        required=True,
+        description="List of amenities IDs"
+    )
 })
+
 
 @api.route('/')
 class PlaceList(Resource):
@@ -57,7 +68,7 @@ class PlaceList(Resource):
 
             # Ervything is fine, create the place
             new_place = facade.create_place(place_data)
-        
+
             return {
                 'id': new_place.id,
                 'title': new_place.title,
@@ -71,6 +82,7 @@ class PlaceList(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
+
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
@@ -80,7 +92,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        
+
         owner = facade.get_user(place.owner_id)
         owner_data = {
             'id': owner.id,
@@ -110,7 +122,8 @@ class PlaceResource(Resource):
             'amenities': amenity_data
         }, 200
 
-    @api.expect(place_model, validate=True)  # Changed to validate=False to allow partial updates
+    @api.expect(place_model, validate=True)
+    # Changed to validate=False to allow partial updates
     @api.response(200, 'Place successfully updated')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
@@ -124,7 +137,7 @@ class PlaceResource(Resource):
         # Get updated data from request
         update_data = api.payload
 
-         # Validate title
+        # Validate title
         if 'title' in update_data and not update_data['title']:
             return {'error': 'Title cannot be empty'}, 400
 
@@ -132,23 +145,32 @@ class PlaceResource(Resource):
         if 'latitude' in update_data:
             if not isinstance(update_data['latitude'], (int, float)) or \
                update_data['latitude'] < -90 or update_data['latitude'] > 90:
-                return {'error': 'Invalid latitude value. Must be between -90 and 90'}, 400
+                return {
+                    'error': 'Invalid latitude. Must be between -90 and 90'
+                }, 400
 
         # Validate longitude
         if 'longitude' in update_data:
-            if not isinstance(update_data['longitude'], (int, float)) or \
-               update_data['longitude'] < -180 or update_data['longitude'] > 180:
-                return {'error': 'Invalid longitude value. Must be between -180 and 180'}, 400
+            if (not isinstance(update_data['longitude'], (int, float)) or
+                    update_data['longitude'] < -180 or
+                    update_data['longitude'] > 180):
+                return {'error': 'Invalid longitude. Must be between -180/180'
+                        }, 400
 
         # Validate price
         if 'price' in update_data:
-            if not isinstance(update_data['price'], (int, float)) or update_data['price'] < 0:
+            if (not isinstance(update_data['price'], (int, float)) or
+                    update_data['price'] < 0):
                 return {'error': 'Price cannot be negative'}, 400
 
         # Validate owner_id
-        if 'owner_id' in update_data and not update_data['owner_id']:
-            return {'error': 'Owner ID cannot be empty'}, 400
-
+        if 'owner_id' in update_data:
+            if not update_data['owner_id']:
+                return {'error': 'Owner ID cannot be empty'}, 400
+        # Check if owner exists
+        owner = facade.get_user(update_data['owner_id'])
+        if not owner:
+            return {'error': 'Owner not found'}, 404
         # Update place
         try:
             facade.update_place(place_id, update_data)
@@ -166,7 +188,7 @@ class PlaceResource(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
-        
+
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
@@ -176,7 +198,7 @@ class PlaceReviewList(Resource):
         reviews = facade.get_reviews_by_place(place_id)
         if reviews is None:  # Place not found
             return {"error": "Place not found"}, 404
-            
+
         # Return empty list if no reviews, but place exists
         return [
             {

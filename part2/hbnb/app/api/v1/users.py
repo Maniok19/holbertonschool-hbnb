@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+import re
 
 api = Namespace('users', description='User operations')
 
@@ -78,6 +79,12 @@ class UserResource(Resource):
 
         # Get updated data from request
         update_data = api.payload
+
+        # Validate email format if email is being updated
+        if 'email' in update_data:
+            email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_pattern, update_data['email']):
+                return {'error': 'Invalid email format'}, 400
 
         # Check if email is being changed and is already taken
         if 'email' in update_data and update_data.get('email') != user.email:
