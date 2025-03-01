@@ -245,7 +245,7 @@ class TestAPI(unittest.TestCase):
     # Test updating a user
     def test_update_user(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-            "first_name": "Test",
+            "first_name": "",
             "last_name": "User",
             "email": "abc@abc.abc"
         })
