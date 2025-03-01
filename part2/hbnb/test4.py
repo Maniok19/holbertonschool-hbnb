@@ -1,8 +1,9 @@
-#!/usr/bin/python3 
+#!/usr/bin/python3
 import unittest
 import uuid
 import json
 from app import create_app
+
 
 class TestAPI(unittest.TestCase):
     def setUp(self):
@@ -44,7 +45,7 @@ class TestAPI(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 201, f"Error creating amenity: {response.json}")
         return response.json.get("id")
-    
+
     def create_test_review(self):
         response = self.client.post('/api/v1/reviews/', json={
             "user_id": self.user_id,
@@ -321,13 +322,13 @@ class TestAPI(unittest.TestCase):
     def test_create_user_invalid_email(self):
         response = self.client.post('/api/v1/users/', json={"first_name": "Test", "email": "invalid"})
         self.assertEqual(response.status_code, 400)
-    
+
     def test_create_review_zero_rating(self):
         response = self.client.post('/api/v1/reviews/', json={"user_id": self.user_id, "place_id": self.place_id, "text": "rrrr", "rating": 0})
         self.assertEqual(response.status_code, 400)
 
     # ID NOT FOUND TESTS
-    
+
     def test_create_place_unfound_user(self):
         response = self.client.post('/api/v1/places/', json={
             "title": "Test Place",
@@ -339,7 +340,7 @@ class TestAPI(unittest.TestCase):
             "amenities": []
         })
         self.assertEqual(response.status_code, 404)
-    
+
     def test_create_review_unfound_user_id(self):
         response = self.client.post('/api/v1/reviews/', json={
             "user_id": "abc",
@@ -368,7 +369,7 @@ class TestAPI(unittest.TestCase):
             "last_name": "User1",
             "email": email1
         })
-        
+
         # Create second user with different email
         email2 = f"test_{uuid.uuid4()}@example.com"
         response = self.client.post('/api/v1/users/', json={
@@ -377,7 +378,7 @@ class TestAPI(unittest.TestCase):
             "email": email2
         })
         user2_id = response.json.get("id")
-        
+
         # Try to update second user with first user's email
         response = self.client.put(f'/api/v1/users/{user2_id}', json={
             "first_name": "Test2",
@@ -480,7 +481,7 @@ class TestAPI(unittest.TestCase):
 
     def test_update_amenity_unfound_id(self):
         response = self.client.put('/api/v1/amenities/abc', json={
-            "name": "Updated Amenity" 
+            "name": "Updated Amenity"
         })
         self.assertEqual(response.status_code, 404)
 
@@ -513,6 +514,7 @@ class TestAPI(unittest.TestCase):
             "amenities": []
         })
         self.assertEqual(response.status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()
