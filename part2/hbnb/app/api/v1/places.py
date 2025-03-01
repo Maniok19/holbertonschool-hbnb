@@ -137,40 +137,14 @@ class PlaceResource(Resource):
         # Get updated data from request
         update_data = api.payload
 
-        # Validate title
-        if 'title' in update_data and not update_data['title']:
-            return {'error': 'Title cannot be empty'}, 400
-
-        # Validate latitude
-        if 'latitude' in update_data:
-            if not isinstance(update_data['latitude'], (int, float)) or \
-               update_data['latitude'] < -90 or update_data['latitude'] > 90:
-                return {
-                    'error': 'Invalid latitude. Must be between -90 and 90'
-                }, 400
-
-        # Validate longitude
-        if 'longitude' in update_data:
-            if (not isinstance(update_data['longitude'], (int, float)) or
-                    update_data['longitude'] < -180 or
-                    update_data['longitude'] > 180):
-                return {'error': 'Invalid longitude. Must be between -180/180'
-                        }, 400
-
-        # Validate price
-        if 'price' in update_data:
-            if (not isinstance(update_data['price'], (int, float)) or
-                    update_data['price'] < 0):
-                return {'error': 'Price cannot be negative'}, 400
-
-        # Validate owner_id
-        if 'owner_id' in update_data:
-            if not update_data['owner_id']:
-                return {'error': 'Owner ID cannot be empty'}, 400
         # Check if owner exists
         owner = facade.get_user(update_data['owner_id'])
         if not owner:
             return {'error': 'Owner not found'}, 404
+        #check for title exist
+        existing_place = facade.get_place_by_title(update_data['title'])
+        if existing_place:
+            return {'error': 'Title already registered'}, 400
         # Update place
         try:
             facade.update_place(place_id, update_data)

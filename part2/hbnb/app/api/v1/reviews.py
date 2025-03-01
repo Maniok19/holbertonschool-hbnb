@@ -28,14 +28,6 @@ class ReviewList(Resource):
         try:
             review_data = api.payload
 
-            # Validate required fields
-            required_fields = ['text', 'rating', 'user_id', 'place_id']
-            for field in required_fields:
-                if field not in review_data:
-                    return {'error': f'Missing required field: {field}'}, 400
-                if not review_data[field]:
-                    return {'error': f'Field {field} cannot be empty'}, 400
-
             # Check if user exists
             user = facade.get_user(review_data['user_id'])
             if not user:
@@ -131,33 +123,6 @@ class ReviewResource(Resource):
                 'text': updated_review.text,
                 'rating': updated_review.rating
             }, 200
-        except ValueError as e:
-            return {'error': str(e)}, 400
-
-            update_data = api.payload
-
-            # Check if user exists
-            user = facade.get_user(update_data['user_id'])
-            if not user:
-                return {'error': 'User not found'}, 404
-
-            # Check if place exists
-            place = facade.get_place(update_data['place_id'])
-            if not place:
-                return {'error': 'Place not found'}, 404
-
-            # Update the review
-            facade.update_review(review_id, update_data)
-            updated_review = facade.get_review(review_id)
-
-            return {
-                'id': updated_review.id,
-                'text': updated_review.text,
-                'rating': updated_review.rating,
-                'user_id': updated_review.user_id,
-                'place_id': updated_review.place_id
-            }, 200
-
         except ValueError as e:
             return {'error': str(e)}, 400
 
