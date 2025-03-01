@@ -84,6 +84,17 @@ class UserResource(Resource):
             existing_user = facade.get_user_by_email(update_data['email'])
             if existing_user:
                 return {'error': 'Email already registered'}, 400
+            # Validate that email is not empty
+        if 'email' in update_data and not update_data['email']:
+            return {'error': 'Email cannot be empty'}, 400
+
+        # Validate that first_name is not empty
+        if 'first_name' in update_data and not update_data['first_name']:
+            return {'error': 'First name cannot be empty'}, 400
+
+        # Validate that last_name is not empty
+        if 'last_name' in update_data and not update_data['last_name']:
+            return {'error': 'Last name cannot be empty'}, 400
 
         # Update user
         try:

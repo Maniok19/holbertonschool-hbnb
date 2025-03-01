@@ -178,6 +178,7 @@ class TestAPI(unittest.TestCase):
         response = self.client.get('/api/v1/reviews/invalid_id')
         self.assertEqual(response.status_code, 404)
 
+    # Test updating a user with one field
     """    # Test updating a user with one field
     def test_update_user_one_field(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={
@@ -237,7 +238,7 @@ class TestAPI(unittest.TestCase):
 
     def test_update_user(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-            "first_name": "",
+            "first_name": "Updated",
             "last_name": "User",
             "email": "abc@abc.abc"
         })
@@ -247,9 +248,9 @@ class TestAPI(unittest.TestCase):
 
     def test_update_user_invalid_data(self):
         response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-            "invalid": "Test",
+            "name": "Test",
             "last_name": "User",
-            "email": "aa@aa.aa"
+            "emil": "aa@aa.aa"
         })
         self.assertEqual(response.status_code, 400)
 
@@ -278,33 +279,101 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     #invalid data side user
+
     # Test updating a user with invalid data (empty first_name)
-def test_update_user_invalid_data_empty_first_name(self):
-    response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-        "first_name": "",
-        "last_name": "User",
-        "email": "updated@example.com"
-    })
-    self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+    def test_update_user_invalid_data_empty_first_name(self):
+        response = self.client.put(f'/api/v1/users/{self.user_id}', json={
+            "first_name": "",
+            "last_name": "User",
+            "email": "updated@example.com"
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
-# Test updating a user with invalid data (empty last_name)
-def test_update_user_invalid_data_empty_last_name(self):
-    response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-        "first_name": "Updated",
-        "last_name": "",
-        "email": "updated@example.com"
-    })
-    self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+    # Test updating a user with invalid data (empty last_name)
+    def test_update_user_invalid_data_empty_last_name(self):
+        response = self.client.put(f'/api/v1/users/{self.user_id}', json={
+            "first_name": "Updated",
+            "last_name": "",
+            "email": "updated@example.com"
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
-# Test updating a user with invalid data (empty email)
-def test_update_user_invalid_data_empty_email(self):
-    response = self.client.put(f'/api/v1/users/{self.user_id}', json={
-        "first_name": "Updated",
-        "last_name": "User",
-        "email": ""
-    })
-    self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+    # Test updating a user with invalid data (empty email)
+    def test_update_user_invalid_data_empty_email(self):
+        response = self.client.put(f'/api/v1/users/{self.user_id}', json={
+            "first_name": "Updated",
+            "last_name": "User",
+            "email": ""
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
 
+
+	# Test updating a place with invalid data (empty title)
+    def test_update_place_invalid_data_empty_title(self):
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+
+    # Test updating a place with invalid data (invalid latitude)
+    def test_update_place_invalid_data_invalid_latitude(self):
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "Test Place",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 200,  # Invalid latitude
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+
+    # Test updating a place with invalid data (invalid longitude)
+    def test_update_place_invalid_data_invalid_longitude(self):
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "Test Place",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": 200,  # Invalid longitude
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+
+    # Test updating a place with invalid data (negative price)
+    def test_update_place_invalid_data_negative_price(self):
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "Test Place",
+            "description": "A test place description",
+            "price": -10.0,  # Negative price
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+
+    # Test updating a place with invalid data (empty owner_id)
+    def test_update_place_invalid_data_empty_owner_id(self):
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "Test Place",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": "",  # Empty owner_id
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 400, f"Expected 400 but got {response.status_code}, response: {response.json}")
+    
+	
     # DELETE TEST
 
     def test_delete_review(self):
