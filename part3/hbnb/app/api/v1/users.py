@@ -14,7 +14,8 @@ user_model = api.model('User', {
         required=True,
         description='Last name of the user'
     ),
-    'email': fields.String(required=True, description='Email of the user')
+    'email': fields.String(required=True, description='Email of the user'),
+    'password': fields.String(required=True, description='Password of the user')
 })
 
 
@@ -50,6 +51,7 @@ class UserList(Resource):
 
             # Create new user if email not found
             new_user = facade.create_user(user_data)
+            self.hash_password(new_user)
 
             # Return user data including ID in the response
             return {
