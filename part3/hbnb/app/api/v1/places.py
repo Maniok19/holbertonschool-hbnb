@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask import jsonify
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('places', description='Place operations')
 
@@ -46,6 +47,7 @@ class PlaceList(Resource):
             for place in places
         ], 200
 
+    @jwt_required()
     @api.expect(place_model, validate=True)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Title already registered')
@@ -54,6 +56,7 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
+        current_user = get_jwt_identity()
 
         try:
             # First check if the owner exists
@@ -65,6 +68,10 @@ class PlaceList(Resource):
             existing_place = facade.get_place_by_title(place_data['title'])
             if existing_place:
                 return {'error': 'Title already registered'}, 400
+            
+            #check that user is the owner
+            if current_user['id'] != place_data['owner_id']:
+                return {'error': 'User is not the owner'}, 400
 
             # Ervything is fine, create the place
             new_place = facade.create_place(place_data)
@@ -122,6 +129,7 @@ class PlaceResource(Resource):
             'amenities': amenity_data
         }, 200
 
+    @jwt_required()
     @api.expect(place_model, validate=True)
     # Changed to validate=False to allow partial updates
     @api.response(200, 'Place successfully updated')
@@ -129,6 +137,8 @@ class PlaceResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update place details"""
+
+        current_user = get_jwt_identity()
         # Get the place first
         place = facade.get_place(place_id)
         if not place:
@@ -145,6 +155,10 @@ class PlaceResource(Resource):
         existing_place = facade.get_place_by_title(update_data['title'])
         if existing_place:
             return {'error': 'Title already registered'}, 400
+        
+                #check that user is the owner
+        if current_user['id'] != update_data['owner_id']:
+            return {'error': 'User is not the owner'}, 400
         # Update place
         try:
             facade.update_place(place_id, update_data)

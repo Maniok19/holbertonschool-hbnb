@@ -83,6 +83,7 @@ class UserResource(Resource):
             'last_name': user.last_name,
             'email': user.email
             }, 200
+    
     @jwt_required()
     @api.expect(user_model, validate=True)
     @api.response(200, 'User successfully updated')

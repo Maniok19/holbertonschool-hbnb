@@ -545,5 +545,23 @@ class TestAPI(unittest.TestCase):
         response = self.client.get(f'/api/v1/places/{self.place_id}/reviews')
         self.assertEqual(response.status_code, 200)
 
+    def test_post_place_not_owner(self):
+        response1 = self.client.post('/api/v1/users/', json={
+            "first_name": "Test",
+            "last_name": "User",
+            "email": "zozozo@zo.zo"
+        })
+        id1 = response1.json.get("id")
+        response = self.client.post('/api/v1/places/', json={
+            "title": "Test Place",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": "{id1}",
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 200)
+
 if __name__ == '__main__':
     unittest.main()

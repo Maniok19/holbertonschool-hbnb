@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required
 
 api = Namespace('reviews', description='Review operations')
 
@@ -18,6 +19,7 @@ review_model = api.model('Review', {
 
 @api.route('/')
 class ReviewList(Resource):
+    @jwt_required()
     @api.expect(review_model, validate=True)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
@@ -82,6 +84,7 @@ class ReviewResource(Resource):
             'place_id': review.place_id
         }, 200
 
+    @jwt_required()
     @api.expect(review_model, validate=True)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
@@ -126,6 +129,7 @@ class ReviewResource(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
+    @jwt_required()
     @api.response(204, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
