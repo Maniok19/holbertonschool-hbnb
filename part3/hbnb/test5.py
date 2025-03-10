@@ -46,6 +46,15 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 201, f"Error creating place: {response.json}")
         place_id = response.json.get("id")
         return place_id
+    
+    def test_create_review(self):
+        response = self.client.post('/api/v1/reviews/', json={
+            "user_id": self.user_id,
+            "place_id": self.place_id,
+            "text": "Great place to stay!",
+            "rating": 5  # Ajout du champ 'rating'
+        }, headers={"Authorization": f"Bearer {self.token}"})
+        self.assertEqual(response.status_code, 201, f"Error creating review: {response.json}")
 
     # NORMAL POST REQUEST
 
@@ -145,6 +154,7 @@ class TestAPI(unittest.TestCase):
             "amenities": []
         }, headers={"Authorization": f"Bearer {self.token}"})
         self.assertEqual(response.status_code, 403, f"Error updating place: {response.json}")
+
 
 
 if __name__ == '__main__':
