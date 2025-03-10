@@ -1,8 +1,9 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from app.models.user import User
 import re
 import bcrypt
-from models.user import User
+
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
@@ -52,14 +53,15 @@ class UserList(Resource):
 
             # Create new user if email not found
             new_user = facade.create_user(user_data)
-            self.hash_password(new_user)
+            new_user.hash_password(user_data['password'])
 
             # Return user data including ID in the response
             return {
                 'id': new_user.id,
                 'first_name': new_user.first_name,
                 'last_name': new_user.last_name,
-                'email': new_user.email
+                'email': new_user.email,
+                'password': new_user.password
             }, 201
 
         except ValueError as e:
