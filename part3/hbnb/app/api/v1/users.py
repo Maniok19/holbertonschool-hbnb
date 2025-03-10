@@ -3,7 +3,7 @@ from app.services import facade
 from app.models.user import User
 import re
 import bcrypt
-from app.auth import jwt_required
+from app.api.v1.auth import jwt_required
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
