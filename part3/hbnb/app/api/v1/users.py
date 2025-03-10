@@ -3,7 +3,7 @@ from app.services import facade
 from app.models.user import User
 import re
 import bcrypt
-
+from app.auth import jwt_required
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
@@ -83,7 +83,7 @@ class UserResource(Resource):
             'last_name': user.last_name,
             'email': user.email
             }, 200
-
+    @jwt_required()
     @api.expect(user_model, validate=True)
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
