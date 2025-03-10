@@ -71,7 +71,7 @@ class PlaceList(Resource):
             
             #check that user is the owner
             if current_user['id'] != place_data['owner_id']:
-                return {'error': 'User is not the owner'}, 400
+                return {'error': 'User is not the owner'}, 403
 
             # Ervything is fine, create the place
             new_place = facade.create_place(place_data)
@@ -158,7 +158,7 @@ class PlaceResource(Resource):
         
         #check that user is the owner
         if current_user['id'] != update_data['owner_id']:
-            return {'error': 'User is not the owner'}, 400
+            return {'error': 'User is not the owner'}, 403
         # Update place
         try:
             facade.update_place(place_id, update_data)

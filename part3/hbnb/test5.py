@@ -82,7 +82,7 @@ class TestAPI(unittest.TestCase):
             "owner_id": user_id,
             "amenities": []
         }, headers={"Authorization": f"Bearer {self.token}"})
-        self.assertEqual(response.status_code, 400, f"Error creating place: {response.json}")
+        self.assertEqual(response.status_code, 403, f"Error creating place: {response.json}")
 
     def test_create_user_login_create_place_no_token(self):
         # Create a place without a token
@@ -110,6 +110,41 @@ class TestAPI(unittest.TestCase):
             "amenities": []
         }, headers={"Authorization": f"Bearer {self.token}"})
         self.assertEqual(response.status_code, 200, f"Error updating place: {response.json}")
+    
+    def test_update_place_no_token(self):
+        # update a place without a token
+        place_title = f"Test{uuid.uuid4()}"
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": place_title,
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": self.user_id,
+            "amenities": []
+        })
+        self.assertEqual(response.status_code, 401, f"Error updating place: {response.json}")
+    
+    def test_update_place_wrong_owner(self):
+        # update a place with a wrong owner
+        response1 = self.client.post('/api/v1/users/', json={
+            "first_name": "Test",
+            "last_name": "User2",
+            "email": f"test{uuid.uuid4()}@example.com",
+            "password": "password123"
+        })
+        self.assertEqual(response1.status_code, 201, f"Error creating user: {response1.json}")
+        user_id = response1.json.get("id")
+        response = self.client.put(f'/api/v1/places/{self.place_id}', json={
+            "title": "Test Place2",
+            "description": "A test place description",
+            "price": 100.0,
+            "latitude": 45.0,
+            "longitude": -75.0,
+            "owner_id": user_id,
+            "amenities": []
+        }, headers={"Authorization": f"Bearer {self.token}"})
+        self.assertEqual(response.status_code, 403, f"Error updating place: {response.json}")
 
 
 if __name__ == '__main__':
