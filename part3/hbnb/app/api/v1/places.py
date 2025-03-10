@@ -156,7 +156,7 @@ class PlaceResource(Resource):
         if existing_place:
             return {'error': 'Title already registered'}, 400
         
-                #check that user is the owner
+        #check that user is the owner
         if current_user['id'] != update_data['owner_id']:
             return {'error': 'User is not the owner'}, 400
         # Update place
