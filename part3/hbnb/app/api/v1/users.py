@@ -4,6 +4,8 @@ from app.models.user import User
 import re
 import bcrypt
 from app.api.v1.auth import jwt_required
+from app.utils.decorators import admin_required
+
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
@@ -41,6 +43,8 @@ class UserList(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
+    @admin_required
     def post(self):
         """Register a new user"""
         user_data = api.payload
@@ -85,6 +89,7 @@ class UserResource(Resource):
             }, 200
     
     @jwt_required()
+    @admin_required
     @api.expect(user_model, validate=True)
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
