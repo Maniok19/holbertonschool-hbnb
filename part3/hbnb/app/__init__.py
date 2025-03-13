@@ -1,16 +1,21 @@
 from flask import Flask
 from flask_restx import Api
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
 
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
+# Import extensions from the new module
+from app.extensions import db, bcrypt, jwt
 
-jwt = JWTManager()
-bcrypt = Bcrypt()
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    
+    # Initialize extensions with app
+    db.init_app(app)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
+    
+    # Import models and routes after extensions are defined
+    from app.models import base, user, place, amenity, review
+    
     api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API',
               security='Bearer Auth', authorizations={
                   'Bearer Auth': {
@@ -34,7 +39,5 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
     api.add_namespace(protected_ns, path='/api/v1/protected')
-    bcrypt.init_app(app)
-    jwt.init_app(app)
-    db.init_app(app)
+    
     return app

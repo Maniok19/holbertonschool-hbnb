@@ -77,13 +77,13 @@ class SQLAlchemyRepository(Repository):
         """
         Get an object from the database by its ID.
         """
-        return self.model.query.get(obj_id)
+        return db.session.query(self.model).get(obj_id)
 
     def get_all(self):
         """
         Get all objects from the database.
         """
-        return self.model.query.all()
+        return db.session.query(self.model).all()
 
     def update(self, obj_id, **data):
         """
@@ -108,7 +108,7 @@ class SQLAlchemyRepository(Repository):
         """
         Get an object from the database by a specific attribute.
         """
-        return self.model.query.filter_by(**{attr_name: attr_value}).first()
+        return db.session.query(self.model).filter_by(**{attr_name: attr_value}).first()
 
 
 class UserRepository(SQLAlchemyRepository):
@@ -126,7 +126,7 @@ class UserRepository(SQLAlchemyRepository):
         """
         Get a user by email.
         """
-        return self.model.query.filter_by(email=email).first()
+        return db.session.query(self.model).filter_by(_email=email).first()
 
 
 class PlaceRepository(SQLAlchemyRepository):

@@ -3,7 +3,8 @@ import re
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from app import bcrypt, db
+# Import from extensions instead of app
+from app.extensions import bcrypt, db
 from app.models.base import BaseModel
 
 

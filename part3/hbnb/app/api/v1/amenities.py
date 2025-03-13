@@ -67,15 +67,17 @@ class AmenityResource(Resource):
     @admin_required
     def put(self, amenity_id):
         """Update an amenity's information"""
-        data = api.payload
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
-            return {"error": "Commodité non trouvée"}, 404
+            return {"error": "Amenity not found"}, 404
 
-        if "name" in data:
-            amenity.name = data["name"]
-        else:
-            return {"error": "Données invalides"}, 400
-
-        facade.update_amenity(amenity, data)
-        return {"message": "Amenity updated successfully"}, 200
+        try:
+            update_data = api.payload
+            facade.update_amenity(amenity_id, update_data)
+            updated_amenity = facade.get_amenity(amenity_id)
+            return {
+                "id": updated_amenity.id,
+                "name": updated_amenity.name
+            }, 200
+        except ValueError as e:
+            return {"error": str(e)}, 400
