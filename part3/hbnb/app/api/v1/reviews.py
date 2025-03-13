@@ -39,6 +39,16 @@ class ReviewList(Resource):
             place = facade.get_place(review_data['place_id'])
             if not place:
                 return {'error': 'Place not found'}, 404
+            
+            #check if the user and the owner place is not the same
+            if user.id == place.owner_id:
+                return {'error': 'The user and the owner of the place are the same'}, 400
+
+            #check if the user has already made a review for the place
+            reviews = facade.get_reviews_by_place(place.id)
+            for review in reviews:
+                if review.user_id == user.id:
+                    return {'error': 'The user has already made a review for the place'}, 400
 
             new_review = facade.create_review(review_data)
             return {
@@ -122,6 +132,11 @@ class ReviewResource(Resource):
                     data['rating'] < 1 or
                     data['rating'] > 5):
                 return {'error': 'Rating must be between 1 and 5'}, 400
+            
+        #check if the user is the same that made the review
+        if 'user_id' in data:
+            if data['user_id'] != review.user_id:
+                return {'error': 'The user is not the same that made the review'}, 400
 
         try:
             facade.update_review(review_id, data)
@@ -144,6 +159,10 @@ class ReviewResource(Resource):
         review = facade.get_review(review_id)
         if not review:
             return {"error": "Review not found"}, 404
+        
+        #check if the user is the same that made the review
+        current_user = get_jwt_identity()
+        
         facade.delete_review(review_id)
         return {"message": "Review deleted successfully"}, 200
 

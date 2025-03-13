@@ -14,7 +14,16 @@ bcrypt = Bcrypt()
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API')
+    api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API',
+              security='Bearer Auth', authorizations={
+                  'Bearer Auth': {
+                      'type': 'apiKey',
+                      'in': 'header',
+                      'name': 'Authorization',
+                      'description': "Jwt authorization header"
+                  }
+              })
+
 
     # Register the users namespace
     api.add_namespace(users_ns, path='/api/v1/users')
