@@ -4,6 +4,7 @@ from app.models.user import User
 import re
 import bcrypt
 from app.api.v1.auth import jwt_required
+from flask_jwt_extended import get_jwt_identity
 from app.utils.decorators import admin_required
 
 api = Namespace('users', description='User operations')
@@ -43,8 +44,6 @@ class UserList(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
-    @jwt_required()
-    @admin_required
     def post(self):
         """Register a new user"""
         user_data = api.payload

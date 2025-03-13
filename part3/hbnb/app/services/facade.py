@@ -1,9 +1,9 @@
-from app.persistence.repository import InMemoryRepository, SQLAlchemyRepository
+from app.persistence.repository import SQLAlchemyRepository
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
-from app.persistence.repository import PlaceRepository, ReviewRepository, AmenityRepository
+from app.persistence.repository import PlaceRepository, ReviewRepository, AmenityRepository, UserRepository
 
 
 class HBnBFacade:
@@ -12,23 +12,14 @@ class HBnBFacade:
         self.place_repo = SQLAlchemyRepository(Place)
         self.review_repo = SQLAlchemyRepository(Review)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
+        self.user_repository = SQLAlchemyRepository(User)
 
 
     # USER METHODS
 
     def create_user(self, user_data):
-        """
-        Create a new user after checking for duplicate email
-        Raises ValueError if email already exists
-        """
-        # Check for duplicate email before creating user
-        existing_user = self.get_user_by_email(user_data['email'])
-        if existing_user:
-            raise ValueError("Email already registered")
-
-        # Create and validate new user
         user = User(**user_data)
-        user.checking()
+        user.hash_password(user_data['password'])
         self.user_repo.add(user)
         return user
 
@@ -39,11 +30,7 @@ class HBnBFacade:
         return self.user_repository.get(user_id)
 
     def get_user_by_email(self, email):
-        """Get user by email"""
-        return next(
-            (user for user in self.user_repo.get_all() if user.email == email),
-            None
-        )
+        return self.user_repo.get_user_by_email(email)
 
     def get_all_users(self):
         return self.user_repo.get_all()

@@ -36,4 +36,5 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(protected_ns, path='/api/v1/protected')
     bcrypt.init_app(app)
     jwt.init_app(app)
+    db.init_app(app)
     return app
