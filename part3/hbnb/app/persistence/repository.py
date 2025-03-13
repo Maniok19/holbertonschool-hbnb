@@ -57,3 +57,84 @@ class InMemoryRepository(Repository):
              if getattr(obj, attr_name) == attr_value),
             None
         )
+
+class PlaceRepository:
+    @staticmethod
+    def create(place_data):
+        place = Place(**place_data)
+        db.session.add(place)
+        db.session.commit()
+        return place
+
+    @staticmethod
+    def get(place_id):
+        return Place.query.get(place_id)
+
+    @staticmethod
+    def get_all():
+        return Place.query.all()
+
+    @staticmethod
+    def update(place_id, place_data):
+        Place.query.filter_by(id=place_id).update(place_data)
+        db.session.commit()
+
+    @staticmethod
+    def delete(place_id):
+        place = Place.query.get(place_id)
+        db.session.delete(place)
+        db.session.commit()
+
+class ReviewRepository:
+    @staticmethod
+    def create(review_data):
+        review = Review(**review_data)
+        db.session.add(review)
+        db.session.commit()
+        return review
+
+    @staticmethod
+    def get(review_id):
+        return Review.query.get(review_id)
+
+    @staticmethod
+    def get_all():
+        return Review.query.all()
+
+    @staticmethod
+    def update(review_id, review_data):
+        Review.query.filter_by(id=review_id).update(review_data)
+        db.session.commit()
+
+    @staticmethod
+    def delete(review_id):
+        review = Review.query.get(review_id)
+        db.session.delete(review)
+        db.session.commit()
+
+class AmenityRepository:
+    @staticmethod
+    def create(amenity_data):
+        amenity = Amenity(**amenity_data)
+        db.session.add(amenity)
+        db.session.commit()
+        return amenity
+
+    @staticmethod
+    def get(amenity_id):
+        return Amenity.query.get(amenity_id)
+
+    @staticmethod
+    def get_all():
+        return Amenity.query.all()
+
+    @staticmethod
+    def update(amenity_id, amenity_data):
+        Amenity.query.filter_by(id=amenity_id).update(amenity_data)
+        db.session.commit()
+
+    @staticmethod
+    def delete(amenity_id):
+        amenity = Amenity.query.get(amenity_id)
+        db.session.delete(amenity)
+        db.session.commit()
