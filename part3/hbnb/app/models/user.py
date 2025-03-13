@@ -1,6 +1,7 @@
 import re
 
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from app import bcrypt, db
 from app.models.base import BaseModel
@@ -21,9 +22,9 @@ class User(BaseModel):
     places = db.relationship('Place',
                              back_populates='owner',
                              cascade='all, delete-orphan')
-    reviews = db.relationship('Review',
-                              back_populates='user',
-                              cascade='all, delete-orphan')
+    reviews = relationship("Review", backref="user", 
+                          foreign_keys="Review.user_id",
+                          primaryjoin="User.id==Review.user_id")
 
     @hybrid_property
     def first_name(self):

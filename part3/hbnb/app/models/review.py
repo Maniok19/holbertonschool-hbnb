@@ -1,13 +1,20 @@
 from app.models.base import BaseModel
-
+from sqlalchemy import Column, String, Integer, ForeignKey
 
 class Review(BaseModel):
+    __tablename__ = 'reviews'
+    
+    text = Column(String(1024), nullable=False)
+    rating = Column(Integer, nullable=False)
+    place_id = Column(String(60), ForeignKey('places.id'), nullable=False)
+    user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+    
     def __init__(self, text, rating, place_id, user_id):
         super().__init__()
         self.text = text
         self.rating = rating
-        self.place_id = place_id  # Changed from place to place_id
-        self.user_id = user_id    # Changed from user to user_id
+        self.place_id = place_id
+        self.user_id = user_id
 
     def checking(self):
         # Vérification du texte

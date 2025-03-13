@@ -122,7 +122,7 @@ class UserRepository(SQLAlchemyRepository):
         """
         super().__init__(User)
 
-    def get_by_email(self, email):
+    def get_user_by_email(self, email):
         """
         Get a user by email.
         """

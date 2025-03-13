@@ -2,10 +2,14 @@
 """ Modèle de données pour les commodités """
 
 from app.models.base import BaseModel
-
+from app import db
 
 class Amenity(BaseModel):
     """Classe représentant une commodité"""
+    __tablename__ = 'amenities'
+    
+    name = db.Column(db.String(100), nullable=False)
+    
     def __init__(self, name):
         super().__init__()
         self.name = name
