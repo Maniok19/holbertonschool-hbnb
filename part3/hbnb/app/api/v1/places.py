@@ -56,9 +56,11 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-        current_user = get_jwt_identity()
+        current_user = get_jwt_identity().get('id')
 
         try:
+            if (place_data['owner_id']) != current_user:
+                return {'error': 'User is not the owner'}, 403
             # First check if the owner exists
             owner = facade.get_user(place_data['owner_id'])
             if not owner:
@@ -68,10 +70,6 @@ class PlaceList(Resource):
             existing_place = facade.get_place_by_title(place_data['title'])
             if existing_place:
                 return {'error': 'Title already registered'}, 400
-            
-            #check that user is the owner
-            if current_user['id'] != place_data['owner_id']:
-                return {'error': 'User is not the owner'}, 403
 
             # Ervything is fine, create the place
             new_place = facade.create_place(place_data)
@@ -159,6 +157,11 @@ class PlaceResource(Resource):
         #check that user is the owner
         if current_user['id'] != update_data['owner_id']:
             return {'error': 'User is not the owner'}, 403
+        
+        #check if the user is the same that made the review.
+        if place.owner_id != current_user:
+            return {'error': 'Unauthorized action'}, 403
+
         # Update place
         try:
             facade.update_place(place_id, update_data)

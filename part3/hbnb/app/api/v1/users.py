@@ -3,7 +3,7 @@ from app.services import facade
 from app.models.user import User
 import re
 import bcrypt
-from app.api.v1.auth import jwt_required
+from app.api.v1.auth import jwt_required, get_jwt_identity
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
@@ -121,6 +121,11 @@ class UserResource(Resource):
         # Validate that last_name is not empty
         if 'last_name' in update_data and not update_data['last_name']:
             return {'error': 'Last name cannot be empty'}, 400
+        
+        #check if user modify their own details.
+        current_user = get_jwt_identity().get('id')
+        if user_id != current_user:
+            return {'error': 'You are not authorized to update this user'}, 403
 
         # Update user
         try:
