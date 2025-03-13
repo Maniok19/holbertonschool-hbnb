@@ -129,20 +129,22 @@ class PlaceResource(Resource):
 
     @jwt_required()
     @api.expect(place_model, validate=True)
-    # Changed to validate=False to allow partial updates
     @api.response(200, 'Place successfully updated')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update place details"""
-
         current_user = get_jwt_identity()
-        # Get the place first
+        is_admin = current_user.get('is_admin', False)
+        user_id = current_user.get('id')
+
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
 
-        # Get updated data from request
+        if not is_admin and place.owner_id != user_id:
+            return {'error': 'Unauthorized action'}, 403
+
         update_data = api.payload
 
         # Check if owner exists
