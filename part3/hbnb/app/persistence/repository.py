@@ -58,6 +58,36 @@ class InMemoryRepository(Repository):
             None
         )
 
+class SQLAlchemyRepository(Repository):
+    def __init__(self, model_class):
+        self.model_class = model_class
+
+    def add(self, obj):
+        db.session.add(obj)
+        db.session.commit()
+        return obj
+
+    def get(self, obj_id):
+        return self.model_class.query.get(obj_id)
+
+    def get_all(self):
+        return self.model_class.query.all()
+
+    def update(self, obj_id, data):
+        self.model_class.query.filter_by(id=obj_id).update(data)
+        db.session.commit()
+
+    def delete(self, obj_id):
+        obj = self.get(obj_id)
+        if obj:
+            db.session.delete(obj)
+            db.session.commit()
+
+    def get_by_attribute(self, attr_name, attr_value):
+        filter_kwargs = {attr_name: attr_value}
+        return self.model_class.query.filter_by(**filter_kwargs).first()
+
+
 class PlaceRepository:
     @staticmethod
     def create(place_data):

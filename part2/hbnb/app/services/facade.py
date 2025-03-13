@@ -1,4 +1,4 @@
-from app.persistence.repository import InMemoryRepository, SQLAlchemyRepository
+from app.persistence.repository import SQLAlchemyRepository
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
@@ -152,3 +152,4 @@ class HBnBFacade:
                 if place.title == title),
             None
         )
+ 
