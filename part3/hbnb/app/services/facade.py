@@ -25,10 +25,9 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
     
     def get_user_by_id(self, user_id):
-        return self.user_repository.get(user_id)
+        return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
-        return self.user_repo.get_user_by_email(email)
         return self.user_repo.get_user_by_email(email)
 
     def get_all_users(self):
@@ -36,7 +35,6 @@ class HBnBFacade:
 
     def update_user(self, user_id, user_data):
         user = User(**user_data)
-        user.checking()
         self.user_repo.update(user_id, user_data)
         return user
 
