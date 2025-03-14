@@ -8,113 +8,156 @@ from app.models.amenity import Amenity
 
 
 class Repository(ABC):
+    """
+    Abstract base class for a repository.
+    """
+
     @abstractmethod
     def add(self, obj):
+        """
+        Add an object to the repository.
+        """
         pass
 
     @abstractmethod
     def get(self, obj_id):
+        """
+        Get an object from the repository by its ID.
+        """
         pass
 
     @abstractmethod
     def get_all(self):
-        pass
-
-    @abstractmethod
-    def update(self, obj_id, data):
-        pass
-
-    @abstractmethod
-    def delete(self, obj_id):
+        """
+        Get all objects from the repository.
+        """
         pass
 
     @abstractmethod
     def get_by_attribute(self, attr_name, attr_value):
+        """
+        Get an object by a specific attribute.
+        """
+        pass
+
+    @abstractmethod
+    def update(self, obj_id, data):
+        """
+        Update an object in the repository.
+        """
+        pass
+
+    @abstractmethod
+    def delete(self, obj_id):
+        """
+        Delete an object from the repository by its ID.
+        """
         pass
 
 
-class InMemoryRepository(Repository):
-    def __init__(self):
-        self._storage = {}
+class SQLAlchemyRepository(Repository):
+    """
+    SQLAlchemy implementation of the Repository.
+    """
+
+    def __init__(self, model):
+        """
+        Initialize the repository with the model to use.
+        """
+        self.model = model
 
     def add(self, obj):
-        self._storage[obj.id] = obj
+        """
+        Add an object to the database.
+        """
+        db.session.add(obj)
+        db.session.commit()
 
     def get(self, obj_id):
-        return self._storage.get(obj_id)
+        """
+        Get an object from the database by its ID.
+        """
+        return db.session.query(self.model).get(obj_id)
 
     def get_all(self):
-        return list(self._storage.values())
+        """
+        Get all objects from the database.
+        """
+        return db.session.query(self.model).all()
 
-    def update(self, obj_id, data):
+    def update(self, obj_id, **data):
+        """
+        Update an object in the database.
+        """
         obj = self.get(obj_id)
         if obj:
-            obj.update(data)
+            for key, value in data.items():
+                setattr(obj, key, value)
+            db.session.commit()
 
     def delete(self, obj_id):
-        if obj_id in self._storage:
-            del self._storage[obj_id]
+        """
+        Delete an object from the database by its ID.
+        """
+        obj = self.get(obj_id)
+        if obj:
+            db.session.delete(obj)
+            db.session.commit()
 
     def get_by_attribute(self, attr_name, attr_value):
-        return next(
-            (obj for obj in self._storage.values()
-             if getattr(obj, attr_name) == attr_value),
-            None
-        )
+        """
+        Get an object from the database by a specific attribute.
+        """
+        return db.session.query(self.model).filter_by(**{attr_name: attr_value}).first()
 
-class PlaceRepository:
-    @staticmethod
-    def create(place_data):
-        place = Place(**place_data)
-        db.session.add(place)
-        db.session.commit()
-        return place
 
-    @staticmethod
-    def get(place_id):
-        return Place.query.get(place_id)
+class UserRepository(SQLAlchemyRepository):
+    """
+    Repository for User objects.
+    """
 
-    @staticmethod
-    def get_all():
-        return Place.query.all()
+    def __init__(self):
+        """
+        Initialize the repository with the User model.
+        """
+        super().__init__(User)
 
-    @staticmethod
-    def update(place_id, place_data):
-        Place.query.filter_by(id=place_id).update(place_data)
-        db.session.commit()
+    def get_user_by_email(self, email):
+        """
+        Get a user by email.
+        """
+        return db.session.query(self.model).filter_by(_email=email).first()
 
-    @staticmethod
-    def delete(place_id):
-        place = Place.query.get(place_id)
-        db.session.delete(place)
-        db.session.commit()
 
-class ReviewRepository:
-    @staticmethod
-    def create(review_data):
-        review = Review(**review_data)
-        db.session.add(review)
-        db.session.commit()
-        return review
+class PlaceRepository(SQLAlchemyRepository):
+    """
+    Repository for Place objects.
+    """
 
-    @staticmethod
-    def get(review_id):
-        return Review.query.get(review_id)
+    def __init__(self):
+        """
+        Initialize the repository with the Place model.
+        """
+        super().__init__(Place)
 
-    @staticmethod
-    def get_all():
-        return Review.query.all()
 
-    @staticmethod
-    def update(review_id, review_data):
-        Review.query.filter_by(id=review_id).update(review_data)
-        db.session.commit()
+class ReviewRepository(SQLAlchemyRepository):
+    """
+    Repository for Review objects.
+    """
 
-    @staticmethod
-    def delete(review_id):
-        review = Review.query.get(review_id)
-        db.session.delete(review)
-        db.session.commit()
+    def __init__(self):
+        """
+        Initialize the repository with the Review model.
+        """
+        super().__init__(Review)
+
+    def get_reviews_by_place(self, place_id):
+        """
+        Get all reviews for a place
+        """
+        return self.model.query.filter_by(place_id=place_id).all()
+
 
 class AmenityRepository:
     @staticmethod
