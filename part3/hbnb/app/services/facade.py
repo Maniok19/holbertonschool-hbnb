@@ -9,9 +9,9 @@ from app.persistence.repository import PlaceRepository, ReviewRepository, Amenit
 class HBnBFacade:
     def __init__(self):
         self.user_repo = UserRepository()
-        self.place_repo = SQLAlchemyRepository(Place)
-        self.review_repo = SQLAlchemyRepository(Review)
-        self.amenity_repo = SQLAlchemyRepository(Amenity)
+        self.place_repo = PlaceRepository()
+        self.review_repo = ReviewRepository()
+        self.amenity_repo = AmenityRepository()
 
     # USER METHODS
 
@@ -54,7 +54,7 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         amenity = Amenity(**amenity_data)
-        amenity.checking()
+
         self.amenity_repo.update(amenity_id, amenity_data)
         return amenity
 
