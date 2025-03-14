@@ -63,7 +63,6 @@ class HBnBFacade:
         """Create a new review"""
         # Create and validate new user
         review = Review(**review_data)
-        review.checking()
         self.review_repo.add(review)
         return review
 
