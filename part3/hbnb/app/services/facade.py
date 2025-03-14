@@ -2,8 +2,8 @@ from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
-from app.persistence.repository import PlaceRepository, ReviewRepository, AmenityRepository, UserRepository
-from app.persistence.repository import PlaceRepository, ReviewRepository, AmenityRepository, UserRepository
+from app.persistence.repository import PlaceRepository, ReviewRepository, AmenityRepository, UserRepository, SQLAlchemyRepository 
+
 
 
 class HBnBFacade:
