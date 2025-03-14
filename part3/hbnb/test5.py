@@ -155,6 +155,31 @@ class TestAPI(unittest.TestCase):
         }, headers={"Authorization": f"Bearer {self.token}"})
         self.assertEqual(response.status_code, 403, f"Error updating place: {response.json}")
 
+    def test_delete_place(self):
+        # delete a place using the token
+        response = self.client.delete(f'/api/v1/places/{self.place_id}', headers={"Authorization": f"Bearer {self.token}"})
+        self.assertEqual(response.status_code, 200, f"Error deleting place: {response.json}")
+
+    def test_delete_place_no_token(self):
+        # delete a place without a token
+        response = self.client.delete(f'/api/v1/places/{self.place_id}')
+        self.assertEqual(response.status_code, 401, f"Error deleting place: {response.json}")
+
+    def test_delete_place_wrong_owner(self):
+        # delete a place with a wrong owner
+        response1 = self.client.post('/api/v1/users/', json={
+            "first_name": "Test",
+            "last_name": "User2",
+            "email": f"test{uuid.uuid4()}@example.com",
+            "password": "password123"
+        })
+        self.assertEqual(response1.status_code, 201, f"Error creating user: {response1.json}")
+        user_id = response1.json.get("id")
+        response = self.client.delete(f'/api/v1/places/{self.place_id}', headers={"Authorization": f"Bearer {self.token}"})
+        self.assertEqual(response.status_code, 403, f"Error deleting place: {response.json}")
+
+    
+
 
 
 if __name__ == '__main__':
