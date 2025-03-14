@@ -3,8 +3,9 @@ from app.services import facade
 from app.models.user import User
 import re
 import bcrypt
-from app.api.v1.auth import jwt_required
+from app.api.v1.auth import jwt_required, get_jwt_identity
 from app.utils.decorators import admin_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('users', description='User operations')
 

@@ -3,16 +3,15 @@ from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
-from app.repository import PlaceRepository, ReviewRepository, AmenityRepository
+from app.persistence.repository import PlaceRepository, ReviewRepository, AmenityRepository, UserRepository
 
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo = SQLAlchemyRepository(User)
+        self.user_repo = UserRepository()
         self.place_repo = SQLAlchemyRepository(Place)
         self.review_repo = SQLAlchemyRepository(Review)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
-
 
     # USER METHODS
 
@@ -39,11 +38,7 @@ class HBnBFacade:
         return self.user_repository.get(user_id)
 
     def get_user_by_email(self, email):
-        """Get user by email"""
-        return next(
-            (user for user in self.user_repo.get_all() if user.email == email),
-            None
-        )
+        return self.user_repo.get_user_by_email(email)
 
     def get_all_users(self):
         return self.user_repo.get_all()
@@ -153,63 +148,3 @@ class HBnBFacade:
                 if place.title == title),
             None
         )
-    
-    @staticmethod
-    def create_place(place_data):
-        return PlaceRepository.create(place_data)
-
-    @staticmethod
-    def get_place(place_id):
-        return PlaceRepository.get(place_id)
-
-    @staticmethod
-    def get_all_places():
-        return PlaceRepository.get_all()
-
-    @staticmethod
-    def update_place(place_id, place_data):
-        return PlaceRepository.update(place_id, place_data)
-
-    @staticmethod
-    def delete_place(place_id):
-        return PlaceRepository.delete(place_id)
-
-    @staticmethod
-    def create_review(review_data):
-        return ReviewRepository.create(review_data)
-
-    @staticmethod
-    def get_review(review_id):
-        return ReviewRepository.get(review_id)
-
-    @staticmethod
-    def get_all_reviews():
-        return ReviewRepository.get_all()
-
-    @staticmethod
-    def update_review(review_id, review_data):
-        return ReviewRepository.update(review_id, review_data)
-
-    @staticmethod
-    def delete_review(review_id):
-        return ReviewRepository.delete(review_id)
-
-    @staticmethod
-    def create_amenity(amenity_data):
-        return AmenityRepository.create(amenity_data)
-
-    @staticmethod
-    def get_amenity(amenity_id):
-        return AmenityRepository.get(amenity_id)
-
-    @staticmethod
-    def get_all_amenities():
-        return AmenityRepository.get_all()
-
-    @staticmethod
-    def update_amenity(amenity_id, amenity_data):
-        return AmenityRepository.update(amenity_id, amenity_data)
-
-    @staticmethod
-    def delete_amenity(amenity_id):
-        return AmenityRepository.delete(amenity_id)
