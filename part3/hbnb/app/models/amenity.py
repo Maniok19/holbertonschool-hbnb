@@ -1,30 +1,34 @@
 #!/usr/bin/env python3
-""" Modèle de données pour les commodités """
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db
 from app.models.base import BaseModel
 
-class Amenity(BaseModel):
-    """Classe représentant une commodité"""
-    __tablename__ = 'amenities'
-    
-    name = db.Column(db.String(100), nullable=False)
-    
-    # Use string name for the relationship to avoid circular import
-    places = db.relationship(
-        'Place',
-        secondary='place_amenity',
-        back_populates='amenities',
-        lazy='dynamic'
-    )
-    
-    def __init__(self, name):
-        super().__init__()
-        self.name = name
 
-    def checking(self):
-        """Validation des données"""
-        if not self.name or len(self.name) > 100:
-            raise ValueError(
-                "Le nom de commodité est requis et doit être ≤ 100 caractères"
-                )
+class Amenity(BaseModel):
+    """
+    Class representing an amenity.
+    """
+
+    __tablename__ = 'amenities'
+
+    _name = db.Column(db.String(128), nullable=False, unique=True)
+
+    @hybrid_property
+    def name(self):
+        """
+        Get the amenity name.
+        """
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        """
+        Set the amenity name.
+        """
+        if not value:
+            raise ValueError('Amenity name cannot be empty.')
+        if len(value) > 128:
+            raise ValueError('Amenity name length exceeds 128 characters.')
+        self._name = value
+
