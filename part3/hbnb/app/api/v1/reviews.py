@@ -134,7 +134,6 @@ class ReviewResource(Resource):
     @jwt_required()
     def delete(self, review_id):
         """Delete a review"""
-        # Trust no one
         current_user = get_jwt_identity()
         if current_user.get('is_admin') is True:
             is_admin = facade.get_user(current_user['id']).is_admin
