@@ -1,12 +1,10 @@
 import re
-from flask_bcrypt import Bcrypt
-from app.models.base import BaseModel
-from app import db, bcrypt
-import uuid
-from .base import BaseModel
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
-bcrypt = Bcrypt()
+from sqlalchemy.ext.hybrid import hybrid_property
+
+from app import bcrypt, db
+from app.models.base import BaseModel
+
 
 class User(BaseModel):
     """
@@ -26,7 +24,7 @@ class User(BaseModel):
     reviews = db.relationship('Review',
                               back_populates='user',
                               cascade='all, delete-orphan')
-    
+
     @hybrid_property
     def first_name(self):
         """
@@ -39,9 +37,9 @@ class User(BaseModel):
         """
         Set the user's first name.
         """
-        if not value or len(value) > 50:
+        if not value or len(value) > 255 or len(value) < 1:
             raise ValueError(
-                'First name must be provided and be less than 50 characters.'
+                'First name must be provided and be less than 255 characters.'
                 )
         self._first_name = value
 
