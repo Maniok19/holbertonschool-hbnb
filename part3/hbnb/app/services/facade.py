@@ -42,7 +42,6 @@ class HBnBFacade:
 
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
-        amenity.checking()
         self.amenity_repo.add(amenity)
         return amenity
 
@@ -87,7 +86,6 @@ class HBnBFacade:
 
     def update_review(self, review_id, review_data):
         review = Review(**review_data)
-        review.checking()
         self.review_repo.update(review_id, review_data)
         return review
 
@@ -120,7 +118,6 @@ class HBnBFacade:
 
         # Create and validate place
         place = Place(**place_data)
-        place.checking()
 
         # Add amenities back to place
         place.amenities = amenities
