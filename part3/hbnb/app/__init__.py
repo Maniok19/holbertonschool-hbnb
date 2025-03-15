@@ -6,7 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 # Import extensions from the new module
 from app.extensions import db, bcrypt, jwt
 
-db = SQLAlchemy()
 jwt = JWTManager()
 bcrypt = Bcrypt()
 from app.api.v1.users import api as users_ns
