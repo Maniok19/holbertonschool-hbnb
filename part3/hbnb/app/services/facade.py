@@ -101,7 +101,6 @@ class HBnBFacade:
 
         # Create and validate place
         place = Place(**place_data)
-        place.checking()
 
         # Add amenities back to place
         place.amenities = amenities
