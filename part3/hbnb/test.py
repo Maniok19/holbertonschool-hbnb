@@ -56,6 +56,8 @@ class TestHBnBAPI(unittest.TestCase):
         # Get regular user authentication token
         self.token = self.login()
 
+        self.place_id = self.create_place()
+
     def create_user(self):
         """Create a new user with unique email using admin token."""
         headers = {'Authorization': f'Bearer {self.admin_token}'}
@@ -83,6 +85,26 @@ class TestHBnBAPI(unittest.TestCase):
         response_data = json.loads(response.data)
         self.assertTrue('access_token' in response_data)
         return response_data['access_token']
+    
+    def create_place(self):
+        """Create a new place using the user token."""
+        headers = {'Authorization': f'Bearer {self.token}'}
+        response = self.app.post('/api/v1/places/', 
+            json={
+                'title': 'My Place',
+                'description': 'A place to stay',
+                'price': 100.00,
+                'latitude': 37.7749,
+                'longitude': -122.4194,
+                'owner_id': self.user_id,
+                'amenities': []
+            },
+            headers=headers)
+        
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.data)
+        self.assertTrue('id' in response_data)
+        return response_data['id']
     
     def test_create_amenity(self):
         """Test creating a new amenity."""
@@ -117,6 +139,26 @@ class TestHBnBAPI(unittest.TestCase):
                 'longitude': -122.4194,
                 'owner_id': self.user_id,
                 'amenities': []
+            },
+            headers=headers)
+        
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(response.data)
+        self.assertTrue('id' in response_data)
+
+    def test_create_review(self):
+        """Test creating a new review."""
+        # Generate a unique review text
+        unique_text = f"Great place to stay {uuid.uuid4()}"
+        
+        # Regular users can create reviews
+        headers = {'Authorization': f'Bearer {self.token}'}
+        response = self.app.post('/api/v1/reviews/', 
+            json={
+                'text': unique_text,
+                'rating': 5,
+                'place_id': self.place_id,
+                'user_id': self.user_id
             },
             headers=headers)
         
