@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
+
 from app import db
 from app.models.user import User
 from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
-
 
 
 class Repository(ABC):
@@ -77,13 +77,13 @@ class SQLAlchemyRepository(Repository):
         """
         Get an object from the database by its ID.
         """
-        return db.session.query(self.model).get(obj_id)
+        return self.model.query.get(obj_id)
 
     def get_all(self):
         """
         Get all objects from the database.
         """
-        return db.session.query(self.model).all()
+        return self.model.query.all()
 
     def update(self, obj_id, **data):
         """
@@ -108,7 +108,7 @@ class SQLAlchemyRepository(Repository):
         """
         Get an object from the database by a specific attribute.
         """
-        return db.session.query(self.model).filter_by(**{attr_name: attr_value}).first()
+        return self.model.query.filter_by(**{attr_name: attr_value}).first()
 
 
 class UserRepository(SQLAlchemyRepository):
@@ -122,11 +122,11 @@ class UserRepository(SQLAlchemyRepository):
         """
         super().__init__(User)
 
-    def get_user_by_email(self, email):
+    def get_by_email(self, email):
         """
         Get a user by email.
         """
-        return db.session.query(self.model).filter_by(_email=email).first()
+        return self.model.query.filter_by(email=email).first()
 
 
 class PlaceRepository(SQLAlchemyRepository):
@@ -159,92 +159,13 @@ class ReviewRepository(SQLAlchemyRepository):
         return self.model.query.filter_by(place_id=place_id).all()
 
 
-class AmenityRepository:
-    @staticmethod
-    def create(amenity_data):
-        amenity = Amenity(**amenity_data)
-        db.session.add(amenity)
-        db.session.commit()
-        return amenity
+class AmenityRepository(SQLAlchemyRepository):
+    """
+    Repository for Amenity objects.
+    """
 
-    @staticmethod
-    def get(amenity_id):
-        return Amenity.query.get(amenity_id)
-
-    @staticmethod
-    def get_all():
-        return Amenity.query.all()
-
-    @staticmethod
-    def update(amenity_id, amenity_data):
-        Amenity.query.filter_by(id=amenity_id).update(amenity_data)
-        db.session.commit()
-
-    @staticmethod
-    def delete(amenity_id):
-        amenity = Amenity.query.get(amenity_id)
-        db.session.delete(amenity)
-        db.session.commit()
-
-class SQLAlchemyRepository(Repository):
-    def __init__(self, model):
-        self.model = model
-
-    def add(self, obj):
-        db.session.add(obj)
-        db.session.commit()
-
-    def get(self, obj_id):
-        return self.model.query.get(obj_id)
-
-    def get_all(self):
-        return self.model.query.all()
-
-    def update(self, obj_id, data):
-        obj = self.get(obj_id)
-        if obj:
-            for key, value in data.items():
-                setattr(obj, key, value)
-            db.session.commit()
-
-    def delete(self, obj_id):
-        obj = self.get(obj_id)
-        if obj:
-            db.session.delete(obj)
-            db.session.commit()
-
-    def get_by_attribute(self, attr_name, attr_value):
-        return self.model.query.filter_by(**{attr_name: attr_value}).first()
-
-class UserRepository(SQLAlchemyRepository):
     def __init__(self):
-        super().__init__(User)
-
-    def get_user_by_email(self, email):
-        return self.model.query.filter_by(email=email).first()
-
-    def add(self, obj):
-        db.session.add(obj)
-        db.session.commit()
-
-    def get(self, obj_id):
-        return self.model.query.get(obj_id)
-
-    def get_all(self):
-        return self.model.query.all()
-
-    def update(self, obj_id, data):
-        obj = self.get(obj_id)
-        if obj:
-            for key, value in data.items():
-                setattr(obj, key, value)
-            db.session.commit()
-
-    def delete(self, obj_id):
-        obj = self.get(obj_id)
-        if obj:
-            db.session.delete(obj)
-            db.session.commit()
-
-    def get_by_attribute(self, attr_name, attr_value):
-        return self.model.query.filter_by(**{attr_name: attr_value}).first()
+        """
+        Initialize the repository with the Amenity model.
+        """
+        super().__init__(Amenity)
