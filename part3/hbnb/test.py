@@ -160,12 +160,30 @@ class TestHBnBAPI(unittest.TestCase):
     
     def create_review(self):
         """Create a test review."""
+        # First create a place by other user that we can review
+        headers = {'Authorization': f'Bearer {self.other_token}'}
+        response = self.app.post('/api/v1/places/', 
+            json={
+                'title': f"Place to review {uuid.uuid4()}",
+                'description': 'A place for testing reviews',
+                'price': 120.00,
+                'latitude': 40.7128,
+                'longitude': -74.0060,
+                'owner_id': self.other_user_id,
+                'amenities': []
+            },
+            headers=headers)
+        
+        self.assertEqual(response.status_code, 201)
+        other_place_id = json.loads(response.data)['id']
+        
+        # Now review the other user's place
         headers = {'Authorization': f'Bearer {self.token}'}
         response = self.app.post('/api/v1/reviews/', 
             json={
                 'text': f"Great place to stay {uuid.uuid4()}",
                 'rating': 5,
-                'place_id': self.place_id,
+                'place_id': other_place_id,
                 'user_id': self.user_id
             },
             headers=headers)
@@ -536,19 +554,38 @@ class TestHBnBAPI(unittest.TestCase):
         
         place_id = json.loads(response.data)['id']
         
-        # Now delete it
-        response = self.app.delete(f'/api/v1/places/{place_id}', headers=headers)
-        self.assertEqual(response.status_code, 200)
+        # Now delete it as admin since only admins can delete places
+        admin_headers = {'Authorization': f'Bearer {self.admin_token}'}
+        response = self.app.delete(f'/api/v1/places/{place_id}', headers=admin_headers)
+        self.assertEqual(response.status_code, 204)
     
     # Review tests
     def test_create_review(self):
         """Test creating a new review."""
+        # First create a place by other user that we can review
+        headers = {'Authorization': f'Bearer {self.other_token}'}
+        response = self.app.post('/api/v1/places/', 
+            json={
+                'title': f"Place to review {uuid.uuid4()}",
+                'description': 'A place for testing reviews',
+                'price': 120.00,
+                'latitude': 40.7128,
+                'longitude': -74.0060,
+                'owner_id': self.other_user_id,
+                'amenities': []
+            },
+            headers=headers)
+        
+        self.assertEqual(response.status_code, 201)
+        other_place_id = json.loads(response.data)['id']
+        
+        # Now review the other user's place
         headers = {'Authorization': f'Bearer {self.token}'}
         response = self.app.post('/api/v1/reviews/', 
             json={
                 'text': f"Great review {uuid.uuid4()}",
                 'rating': 4,
-                'place_id': self.place_id,
+                'place_id': other_place_id,
                 'user_id': self.user_id
             },
             headers=headers)
@@ -557,12 +594,30 @@ class TestHBnBAPI(unittest.TestCase):
     
     def test_create_invalid_review_rating(self):
         """Test creating a review with an invalid rating."""
+        # First create a place by other user that we can review
+        headers = {'Authorization': f'Bearer {self.other_token}'}
+        response = self.app.post('/api/v1/places/', 
+            json={
+                'title': f"Place for bad rating {uuid.uuid4()}",
+                'description': 'A place for testing invalid reviews',
+                'price': 120.00,
+                'latitude': 40.7128,
+                'longitude': -74.0060,
+                'owner_id': self.other_user_id,
+                'amenities': []
+            },
+            headers=headers)
+        
+        self.assertEqual(response.status_code, 201)
+        other_place_id = json.loads(response.data)['id']
+        
+        # Now try to post an invalid review
         headers = {'Authorization': f'Bearer {self.token}'}
         response = self.app.post('/api/v1/reviews/', 
             json={
                 'text': 'Bad rating',
                 'rating': 6,  # Rating should be 1-5
-                'place_id': self.place_id,
+                'place_id': other_place_id,
                 'user_id': self.user_id
             },
             headers=headers)
@@ -602,35 +657,32 @@ class TestHBnBAPI(unittest.TestCase):
         headers = {'Authorization': f'Bearer {self.admin_token}'}
         response = self.app.delete(f'/api/v1/reviews/{self.review_id}', headers=headers)
         self.assertEqual(response.status_code, 200)
-    
-def test_delete_review_non_admin(self):
-    """Test deleting a review without admin privileges."""
-    # First create a review - check the response for success
-    headers = {'Authorization': f'Bearer {self.token}'}
-    response = self.app.post('/api/v1/reviews/', 
-        json={
-            'text': f"Review to delete {uuid.uuid4()}",
-            'rating': 5,
-            'place_id': self.place_id,
-            'user_id': self.user_id
-        },
-        headers=headers)
-    
-    # Print the response for debugging
-    print(f"Review creation response: {response.data}")
-    
-    # Make sure review was created successfully before continuing
-    self.assertEqual(response.status_code, 201, 
-                    f"Review creation failed with status {response.status_code}: {response.data}")
-    
-    # Now extract the ID safely
-    response_data = json.loads(response.data)
-    self.assertIn('id', response_data, f"Response missing 'id' field: {response_data}")
-    review_id = response_data['id']
-    
-    # Now try to delete it without admin privileges
-    response = self.app.delete(f'/api/v1/reviews/{review_id}', headers=headers)
-    self.assertEqual(response.status_code, 403)
+
+    def test_delete_review_non_admin(self):
+        """Test deleting a review without admin privileges."""
+        # First create a review - check the response for success
+        headers = {'Authorization': f'Bearer {self.token}'}
+        response = self.app.post('/api/v1/reviews/', 
+            json={
+                'text': f"Review to delete {uuid.uuid4()}",
+                'rating': 5,
+                'place_id': self.place_id,
+                'user_id': self.user_id
+            },
+            headers=headers)
+        
+        # Make sure review was created successfully before continuing
+        self.assertEqual(response.status_code, 201, 
+                        f"Review creation failed with status {response.status_code}: {response.data}")
+        
+        # Now extract the ID safely
+        response_data = json.loads(response.data)
+        self.assertIn('id', response_data, f"Response missing 'id' field: {response_data}")
+        review_id = response_data['id']
+        
+        # Now try to delete it without admin privileges
+        response = self.app.delete(f'/api/v1/reviews/{review_id}', headers=headers)
+        self.assertEqual(response.status_code, 403)
 
 
 if __name__ == '__main__':

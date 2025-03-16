@@ -218,21 +218,18 @@ class PlaceResource(Resource):
     @jwt_required()
     def delete(self, place_id):
         """Delete a place"""
-        # Trust no one
         current_user = get_jwt_identity()
-        if current_user.get('is_admin') is True:
-            is_admin = facade.get_user(current_user['id']).is_admin
-            if not is_admin:
-                return {'error': 'Admin privileges required.'}, 403
-        else:
-            return {'error': 'Admin privileges required.'}, 403
-
+        user = facade.get_user(current_user['id'])
+        
         place = facade.get_place(place_id)
         if place is None:
             return {'error': 'Place not found.'}, 404
-
-        owner = facade.get_user(place.owner_id)
-        if current_user['id'] != owner.id:
+            
+        # Allow deletion if user is admin or the owner of the place
+        is_admin = user.is_admin if hasattr(user, 'is_admin') else False
+        is_owner = current_user['id'] == place.owner_id
+        
+        if not (is_admin or is_owner):
             return {'error': 'Unauthorized action.'}, 403
 
         facade.delete_place(place_id)

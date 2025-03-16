@@ -55,7 +55,7 @@ class ReviewList(Resource):
         if user.id in [review.user_id for review in place.reviews]:
             return {'error': 'You have already reviewed this place.'}, 400
 
-        if current_user['id'] != place.owner_id:
+        if current_user['id'] == place.owner_id:
             return {'error': 'Unauthorized action.'}, 403
 
         try:
@@ -109,24 +109,34 @@ class ReviewResource(Resource):
         """Update a review's information"""
         current_user = get_jwt_identity()
         review_data = api.payload
+        
+        # Validate input fields
         for key in review_data:
             if key not in ['text', 'rating', 'user_id', 'place_id']:
                 return {'error': 'Invalid input data.'}, 400
-
-        if current_user['id'] != review_data['user_id']:
-            return {'error': 'Invalid input data.'}, 400
-
-        review = facade.get_reviews_by_place(review_data['place_id'])
-        if review.owner_id != current_user['id']:
-            return {'error': 'Unauthorized action.'}, 403
-
-        if review_data is facade.get_review(review_id):
-            return {'error': 'Invalid input data.'}, 400
-
+        
+        # Get the current review
+        review = facade.get_review(review_id)
+        if not review:
+            return {'error': 'Review not found.'}, 404
+        
+        # Only allow updating your own review
+        if current_user['id'] != review.user_id:
+            return {'error': 'You can only update your own reviews.'}, 403
+        
+        # Ensure place_id hasn't changed
+        if 'place_id' in review_data and review_data['place_id'] != review.place_id:
+            return {'error': 'Cannot change review place.'}, 400
+        
+        # Ensure user_id hasn't changed
+        if 'user_id' in review_data and review_data['user_id'] != review.user_id:
+            return {'error': 'Cannot change review owner.'}, 400
+        
         try:
             facade.update_review(review_id, review_data)
         except ValueError as e:
             return {'error': str(e)}, 400
+        
         return {'message': 'Review updated successfully.'}, 200
 
     @api.response(200, 'Review deleted successfully')
