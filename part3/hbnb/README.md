@@ -1,105 +1,144 @@
-# HBnB API
+# HBnB - Holberton Airbnb Clone
 
-This project is an API for the HBnB application, developed as an exercise for Holberton School. The API provides endpoints for managing users, places, amenities, and reviews.
 
 ## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
+- [Overview](#overview)
+- [Features](#features)
+- [Database Schema](#database-schema)
 - [API Endpoints](#api-endpoints)
-    - [Users](#users)
-    - [Places](#places)
-    - [Amenities](#amenities)
-    - [Reviews](#reviews)
-- [Models](#models)
-- [Services](#services)
+- [Installation](#installation)
 - [Configuration](#configuration)
+- [Usage](#usage)
 - [Testing](#testing)
-- [License](#license)
+- [Technologies Used](#technologies-used)
 
-## Installation
+## Overview
+HBnB is a full-stack web application inspired by Airbnb, enabling users to list, discover, and book accommodations. This project provides a RESTful API using Flask and SQLAlchemy for managing users, places, amenities, and reviews.
 
-1. Clone the repository:
-        ```bash
-        git clone https://github.com/yourusername/holbertonschool-hbnb.git
-        cd holbertonschool-hbnb/part2/hbnb
-        ```
+## Features
+- **User Management**: Registration, authentication, and profile management
+- **Places Management**: Create, update, and search for accommodations
+- **Reviews System**: Post and manage reviews for places
+- **Amenities Management**: Associate amenities with places
 
+## Database Schema
+The application uses a relational database with the following entities:
 
-2. Install the required dependencies:
-        ```bash
-        pip install -r requirements.txt
-        ```
+![ER Diagram](./Diagram/mermaid-diagram-2025-03-17-181330.png)
 
-## Usage
-
-1. Run the application:
-        ```bash
-        python3 run.py
-        ```
-
-2. The API will be available at `http://127.0.0.1:5000`.
+### Main Entities:
+- **User**: Manages user accounts (owners and guests)
+- **Place**: Represents accommodations
+- **Review**: Contains user reviews of places
+- **Amenity**: Features available at accommodations
+- **Place_Amenity**: Junction table for the many-to-many relationship between places and amenities
 
 ## API Endpoints
 
 ### Users
-
-- **GET /api/v1/users/**: Retrieve a list of all users.
-- **POST /api/v1/users/**: Create a new user.
-- **GET /api/v1/users/<user_id>**: Retrieve a user by ID.
-- **PUT /api/v1/users/<user_id>**: Update a user by ID.
+- `GET /api/v1/users`: List all users
+- `GET /api/v1/users/<user_id>`: Get user by ID
+- `POST /api/v1/users`: Create a new user
+- `PUT /api/v1/users/<user_id>`: Update a user
+- `DELETE /api/v1/users/<user_id>`: Delete a user
 
 ### Places
-
-- **GET /api/v1/places/**: Retrieve a list of all places.
-- **POST /api/v1/places/**: Create a new place.
-- **GET /api/v1/places/<place_id>**: Retrieve a place by ID.
-- **PUT /api/v1/places/<place_id>**: Update a place by ID.
-- **GET /api/v1/places/<place_id>/reviews**: Retrieve all reviews for a specific place.
+- `GET /api/v1/places`: List all places
+- `GET /api/v1/places/<place_id>`: Get place by ID
+- `POST /api/v1/places`: Create a new place
+- `PUT /api/v1/places/<place_id>`: Update a place
+- `DELETE /api/v1/places/<place_id>`: Delete a place
 
 ### Amenities
-
-- **GET /api/v1/amenities/**: Retrieve a list of all amenities.
-- **POST /api/v1/amenities/**: Create a new amenity.
-- **GET /api/v1/amenities/<amenity_id>**: Retrieve an amenity by ID.
-- **PUT /api/v1/amenities/<amenity_id>**: Update an amenity by ID.
+- `GET /api/v1/amenities`: List all amenities
+- `GET /api/v1/amenities/<amenity_id>`: Get amenity by ID
+- `POST /api/v1/amenities`: Create a new amenity (admin only)
+- `PUT /api/v1/amenities/<amenity_id>`: Update an amenity (admin only)
+- `DELETE /api/v1/amenities/<amenity_id>`: Delete an amenity (admin only)
 
 ### Reviews
+- `GET /api/v1/reviews`: List all reviews
+- `GET /api/v1/reviews/<review_id>`: Get review by ID
+- `POST /api/v1/reviews`: Create a new review
+- `PUT /api/v1/reviews/<review_id>`: Update a review (own reviews only)
+- `DELETE /api/v1/reviews/<review_id>`: Delete a review
 
-- **GET /api/v1/reviews/**: Retrieve a list of all reviews.
-- **POST /api/v1/reviews/**: Create a new review.
-- **GET /api/v1/reviews/<review_id>**: Retrieve a review by ID.
-- **PUT /api/v1/reviews/<review_id>**: Update a review by ID.
-- **DELETE /api/v1/reviews/<review_id>**: Delete a review by ID.
-- **GET /api/v1/places/<place_id>/reviews**: Retrieve all reviews for a specific place.
+## Installation
 
-## Models
+### Prerequisites
+- Python 3.10+
+- PostgreSQL database
 
-- **User**: Represents a user in the system.
-- **Place**: Represents a place in the system.
-- **Amenity**: Represents an amenity in the system.
-- **Review**: Represents a review in the system.
+### Steps
+1. Clone the repository:
+        ```bash
+        git clone https://github.com/yourusername/holbertonschool-hbnb.git
+        cd holbertonschool-hbnb/part3/hbnb
+        ```
 
-## Services
 
-The services layer handles the business logic and interactions with the data repository.
+2. Install dependencies:
+        ```bash
+        pip install -r requirements.txt
+        ```
 
-## Configuration
+3. Set up the database:
+        ```bash
+        mysql -h hostname -u user database < Creation_Script.sql
+        ```
 
-Configuration settings are managed in `config.py`. The default configuration is for development.
 
-## Testing
+# JWT settings
+JWT_SECRET_KEY = 'your-secret-key'
+JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour
 
-To run the tests, use the following command:
-```bash
-python3 tests.py
+# Other configurations
+DEBUG = True
 ```
 
-# Authors
-Esteban Cratere
+## Usage
 
+### Starting the Application
+```bash
+python run.py
+```
 
-Mano Delcourt 
+The API will be available at `http://localhost:5000/api/v1/`.
 
+### API Authentication
+Most endpoints require JWT authentication. To get a token:
 
-Herve Le Guennec
+1. Use the login endpoint:
+        ```bash
+        curl -X POST http://localhost:5000/api/v1/auth/login \
+                  -H "Content-Type: application/json" \
+                  -d '{"email": "user@example.com", "password": "password123"}'
+        ```
+
+2. Include the token in subsequent requests:
+        ```bash
+        curl -X GET http://localhost:5000/api/v1/places \
+                  -H "Authorization: Bearer your_token_here"
+        ```
+
+## Testing
+The project includes comprehensive test cases covering various scenarios:
+
+```bash
+python test.py
+```
+
+Test categories include:
+- Resource creation (successful and invalid data cases)
+- Resource retrieval (successful and invalid ID cases)
+- Resource updates (successful and invalid data cases)
+
+## Technologies Used
+- **Backend**: Flask, SQLAlchemy
+- **API**: Flask-RestX
+- **Authentication**: Flask-JWT-Extended
+- **Database**: PostgreSQL
+- **Testing**: Python unittest
+
+## Authors
+Herve, Esteban, Mano Delcourt
