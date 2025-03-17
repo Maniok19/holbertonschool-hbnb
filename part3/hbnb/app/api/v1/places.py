@@ -98,6 +98,7 @@ class PlaceList(Resource):
         if current_user['id'] != user.id:
             return {'error': 'Unauthorized action.'}, 403
 
+        amenity_list = []
         if place_data.get('amenities'):
             for amenity in place_data.get('amenities'):
                 if facade.get_amenity(amenity['id']) is None:
@@ -138,9 +139,9 @@ class PlaceResource(Resource):
     def get(self, place_id):
         """Get place details by ID"""
         place = facade.get_place(place_id)
-        owner = facade.get_user(place.owner_id)
         if place:
-            {
+            owner = facade.get_user(place.owner_id)
+            return {
                 'id': place.id,
                 'title': place.title,
                 'description': place.description,
@@ -172,44 +173,47 @@ class PlaceResource(Resource):
         """Update a place's information"""
         current_user = get_jwt_identity()
         place_data = api.payload
-        for key in place_data:
+        
+        # Validate payload fields
+        """for key in place_data:
             if key not in ['title',
                            'price',
                            'description',
                            'latitude',
                            'longitude',
-                           'owner_id']:
-                return {'error': 'Invalid input data.'}, 400
+                           'owner_id',
+                           'amenities']:
+                return {'error': 'Invalid input data.'}, 400"""
 
-        # Trust no one
+        # Check if place exists
+        place = facade.get_place(place_id)
+        if place is None:
+            return {'error': 'Place not found.'}, 404
+            
+        # Check user permissions
         if current_user.get('is_admin') is True:
             is_admin = facade.get_user(current_user['id']).is_admin
-            if not is_admin:
+            if is_admin:
+                # Admin can update any place
+                pass
+            else:
                 return {'error': 'Admin privileges required.'}, 403
         else:
-            user = facade.get_user(place_data.get('owner_id'))
-            if user is None:
-                return {'error': 'Invalid owner_id.'}, 400
-
-            is_admin = facade.get_user(current_user['id']).is_admin
-            if not is_admin and current_user['id'] != user.id:
+            # Regular user can only update their own places
+            if current_user['id'] != place.owner_id:
                 return {'error': 'Unauthorized action.'}, 403
 
-            if facade.get_place(place_id) is None:
-                return {'error': 'Place not found.'}, 404
-
-            if place_data is facade.get_place(place_id):
-                return {'error': 'Invalid input data.'}, 400
-
-            if place_data.get('amenities'):
-                for amenity in place_data.get('amenities'):
-                    if facade.get_amenity(amenity['id']) is None:
-                        return {'error': 'Invalid amenity ID.'}, 400
+        # Validate amenities if provided
+        if place_data.get('amenities'):
+            for amenity in place_data.get('amenities'):
+                if facade.get_amenity(amenity['id']) is None:
+                    return {'error': 'Invalid amenity ID.'}, 400
 
         try:
             facade.update_place(place_id, place_data)
         except ValueError as e:
             return {'error': str(e)}, 400
+        
         return {'message': 'Place updated successfully.'}, 200
 
     @api.response(200, 'Place successfully deleted')

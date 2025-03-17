@@ -124,16 +124,15 @@ class ReviewResource(Resource):
         if current_user['id'] != review.user_id:
             return {'error': 'You can only update your own reviews.'}, 403
         
-        # Ensure place_id hasn't changed
-        if 'place_id' in review_data and review_data['place_id'] != review.place_id:
-            return {'error': 'Cannot change review place.'}, 400
-        
-        # Ensure user_id hasn't changed
-        if 'user_id' in review_data and review_data['user_id'] != review.user_id:
-            return {'error': 'Cannot change review owner.'}, 400
+        # Create a copy of the data for updating
+        update_data = {}
+        if 'text' in review_data:
+            update_data['text'] = review_data['text']
+        if 'rating' in review_data:
+            update_data['rating'] = review_data['rating']
         
         try:
-            facade.update_review(review_id, review_data)
+            facade.update_review(review_id, update_data)
         except ValueError as e:
             return {'error': str(e)}, 400
         
@@ -145,17 +144,18 @@ class ReviewResource(Resource):
     def delete(self, review_id):
         """Delete a review"""
         current_user = get_jwt_identity()
+        review = facade.get_review(review_id)
+        
+        if not review:
+            return {'error': 'Review not found.'}, 404
+            
+        is_admin = False
         if current_user.get('is_admin') is True:
             is_admin = facade.get_user(current_user['id']).is_admin
-            if not is_admin:
-                return {'error': 'Admin privileges required.'}, 403
-        else:
-            return {'error': 'Admin privileges required.'}, 403
-
-        if facade.get_review(review_id):
-            place = facade.get_place(review_id)
-            if place:
-                place.remove_review(review_id)
+        
+        # Allow users to delete their own reviews or admins to delete any review
+        if current_user['id'] == review.user_id or is_admin:
             facade.delete_review(review_id)
-            return {'error': 'Review deleted successfully.'}, 200
-        return {'error': 'Review not found.'}, 404
+            return {'message': 'Review deleted successfully.'}, 200
+        
+        return {'error': 'Unauthorized. You can only delete your own reviews.'}, 403

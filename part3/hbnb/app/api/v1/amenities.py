@@ -56,17 +56,18 @@ class AmenityList(Resource):
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
-    @api.response(200, 'Amenity details retrieved successfully')
+    @api.response(200, 'Success')
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
-        """Get amenity details by ID"""
+        """Get a specific amenity by ID"""
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
-            return {'error': 'Amenity not found.'}, 404
+            return {'error': 'Amenity not found'}, 404
+        
         return {
             'id': amenity.id,
             'name': amenity.name
-            }, 200
+        }, 200
 
     @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
