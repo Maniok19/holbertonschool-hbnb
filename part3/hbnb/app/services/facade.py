@@ -111,6 +111,12 @@ class HBnBFacade:
         Get a place by ID.
         """
         return self.place_repo.get(place_id)
+    
+    def get_places_by_title(self, title):
+        """
+        Get a place by title.
+        """
+        return self.place_repo.get_by_attribute('title', title)
 
     def get_all_places(self):
         """

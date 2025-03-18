@@ -97,6 +97,11 @@ class PlaceList(Resource):
 
         if current_user['id'] != user.id:
             return {'error': 'Unauthorized action.'}, 403
+        
+        #if place title already exists
+
+        if facade.get_places_by_title(place_data.get('title')):
+            return {'error': 'Place title already exists.'}, 400
 
         amenity_list = []
         if place_data.get('amenities'):

@@ -143,7 +143,7 @@ class TestHBnBAPI(unittest.TestCase):
         headers = {'Authorization': f'Bearer {self.token}'}
         response = self.app.post('/api/v1/places/', 
             json={
-                'title': 'My Place',
+                'title': f'{uuid.uuid4()}',
                 'description': 'A place to stay',
                 'price': 100.00,
                 'latitude': 37.7749,
