@@ -179,17 +179,6 @@ class PlaceResource(Resource):
         current_user = get_jwt_identity()
         place_data = api.payload
         
-        # Validate payload fields
-        """for key in place_data:
-            if key not in ['title',
-                           'price',
-                           'description',
-                           'latitude',
-                           'longitude',
-                           'owner_id',
-                           'amenities']:
-                return {'error': 'Invalid input data.'}, 400"""
-
         # Check if place exists
         place = facade.get_place(place_id)
         if place is None:
