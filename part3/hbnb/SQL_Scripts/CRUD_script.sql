@@ -1,10 +1,10 @@
 -- SELECT operations
-SELECT * FROM user;
-SELECT * FROM amenity;
+SELECT * FROM users;
+SELECT * FROM amenities;
 
 -- INSERT operations
 -- Add a new user
-INSERT INTO user (id, first_name, last_name, email, password)
+INSERT INTO users (id, _first_name, _last_name, _email, _password)
 VALUES (
     'f47ac10b-58cc-4372-a567-0e02b2c3d479',
     'Test',
@@ -14,7 +14,7 @@ VALUES (
 );
 
 -- Add a new place
-INSERT INTO place (id, title, description, price, latitude, longitude, owner_id)
+INSERT INTO places (id, _title, _description, _price, _latitude, _longitude, _owner_id)
 VALUES (
     '7dc53df5-703e-49b3-8670-b1c468f47f1f',
     'Beautiful Apartment',
@@ -26,7 +26,7 @@ VALUES (
 );
 
 -- Add a new review
-INSERT INTO review (id, text, rating, user_id, place_id)
+INSERT INTO reviews (id, _text, _rating, _user_id, _place_id)
 VALUES (
     '47bac150-58cc-4372-a567-0e02b2c3d480',
     'Amazing place with great views!',
@@ -42,18 +42,18 @@ INSERT INTO place_amenity (place_id, amenity_id) VALUES
 
 -- UPDATE operations
 -- Update user information
-UPDATE user
-SET last_name = 'UpdatedName'
+UPDATE users
+SET _last_name = 'UpdatedName'
 WHERE id = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 
 -- Update place price
-UPDATE place
-SET price = 150.00
+UPDATE places
+SET _price = 150.00
 WHERE id = '7dc53df5-703e-49b3-8670-b1c468f47f1f';
 
 -- UPDATE review rating
-UPDATE review
-SET rating = 4
+UPDATE reviews
+SET _rating = 4
 WHERE id = '47bac150-58cc-4372-a567-0e02b2c3d480';
 
 -- DELETE operations
@@ -63,17 +63,17 @@ WHERE place_id = '7dc53df5-703e-49b3-8670-b1c468f47f1f'
 AND amenity_id = '550e8400-e29b-41d4-a716-446655440002';
 
 -- Delete review
-DELETE FROM review
+DELETE FROM reviews
 WHERE id = '47bac150-58cc-4372-a567-0e02b2c3d480';
 
 -- Delete place
-DELETE FROM place
+DELETE FROM places
 WHERE id = '7dc53df5-703e-49b3-8670-b1c468f47f1f';
 
 -- Delete user
-DELETE FROM user
+DELETE FROM users
 WHERE id = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 
 -- Verification queries
-SELECT * FROM user WHERE id = '36c9050e-ddd3-4c3b-9731-9f487208bbc1';
-SELECT * FROM amenity ORDER BY name;
+SELECT * FROM users WHERE id = '36c9050e-ddd3-4c3b-9731-9f487208bbc1';
+SELECT * FROM amenities ORDER BY _name;

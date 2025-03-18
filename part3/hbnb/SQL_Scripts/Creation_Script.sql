@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS amenity;
 DROP TABLE IF EXISTS user;
 
 -- Create User table
-CREATE TABLE user (
+CREATE TABLE users (
     id CHAR(36) PRIMARY KEY,
     first_name VARCHAR(255),
     last_name VARCHAR(255),
@@ -16,7 +16,7 @@ CREATE TABLE user (
 );
 
 -- Create Place table
-CREATE TABLE place (
+CREATE TABLE places (
     id CHAR(36) PRIMARY KEY,
     title VARCHAR(255),
     description TEXT,
@@ -28,7 +28,7 @@ CREATE TABLE place (
 );
 
 -- Create Review table
-CREATE TABLE review (
+CREATE TABLE reviews (
     id CHAR(36) PRIMARY KEY,
     text TEXT,
     rating INT CHECK (rating BETWEEN 1 AND 5),
@@ -40,7 +40,7 @@ CREATE TABLE review (
 );
 
 -- Create Amenity table
-CREATE TABLE amenity (
+CREATE TABLE amenities (
     id CHAR(36) PRIMARY KEY,
     name VARCHAR(255) UNIQUE
 );

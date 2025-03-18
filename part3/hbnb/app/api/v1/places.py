@@ -238,3 +238,22 @@ class PlaceResource(Resource):
 
         facade.delete_place(place_id)
         return {'message': 'Place successfully deleted.'}, 200
+
+@api.route('/<place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.response(200, 'List of reviews retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get reviews for a place"""
+        place = facade.get_place(place_id)
+        if place:
+            reviews = []
+            for review in place.reviews:
+                reviews.append({
+                    'id': review.id,
+                    'text': review.text,
+                    'rating': review.rating,
+                    'user_id': review.user_id
+                })
+            return reviews, 200
+        return {'error': 'Place not found.'}, 404
