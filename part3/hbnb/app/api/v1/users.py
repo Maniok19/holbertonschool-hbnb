@@ -56,7 +56,7 @@ class UserList(Resource):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email
-            }, 200
+            }, 201
 
     @api.response(200, 'List of users retrieved successfully')
     def get(self):

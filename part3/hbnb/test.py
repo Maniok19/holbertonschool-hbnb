@@ -85,7 +85,7 @@ class TestHBnBAPI(unittest.TestCase):
             },
             headers=headers)
         
-        self.assertEqual(response.status_code, 200)  # API returns 200 for successful user creation
+        self.assertEqual(response.status_code, 201)
         response_data = json.loads(response.data)
         self.assertTrue('id' in response_data)
         return response_data['id']
@@ -111,10 +111,10 @@ class TestHBnBAPI(unittest.TestCase):
             },
             headers=headers)
         
-        if response.status_code != 200:
+        if response.status_code != 201:
             print(f"Failed to create other user: {response.data.decode('utf-8')}")
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         response_data = json.loads(response.data)
         return response_data['id']
 
@@ -238,7 +238,7 @@ class TestHBnBAPI(unittest.TestCase):
             },
             headers=headers)
         
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         response_data = json.loads(response.data)
         self.assertTrue('id' in response_data)
     
