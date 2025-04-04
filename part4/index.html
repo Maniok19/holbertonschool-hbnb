@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Places</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/icon.png">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <img class="logo" src="images/logo.png" alt="HBNB Logo">
+            <nav>
+                <a class="login-button" href="login.html" id="login-link">Login</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section id="filter">
+            <label for="price-filter">Max Price:</label>
+            <select id="price-filter">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </section>
+        <section id="places-list">
+            <div class="place_card">
+                <img src="images/shrek_home.jpg" alt="Place Image">
+                <div class="card-content">
+                    <div>
+                        <h2>Shrek place</h2>
+                        <p class="price">$100 per night</p>
+                    </div>
+                    <a href="place.html?id=place_id" class="details-button">View Details</a>
+                </div>
+            </div>
+
+            <!-- List of places will be populated dynamically -->
+        </section>
+    </main>
+    <footer>
+        <p>all rights reserved</p>
+    </footer>
+    <script src="scripts.js"></script>
+</body>
+</html>

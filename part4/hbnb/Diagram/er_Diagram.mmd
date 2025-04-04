@@ -1,0 +1,44 @@
+erDiagram
+    User {
+        string id PK
+        string first_name
+        string last_name
+        string email
+        string password
+        boolean is_admin
+    }
+
+    Place {
+        string id PK
+        string title
+        text description
+        decimal price
+        float latitude
+        float longitude
+        string owner_id FK
+    }
+
+    Review {
+        string id PK
+        text text
+        integer rating
+        string user_id FK
+        string place_id FK
+    }
+
+    Amenity {
+        string id PK
+        string name
+    }
+
+    Place_Amenity {
+        string place_id PK,FK
+        string amenity_id PK,FK
+    }
+
+    User ||--o{ Review : "has"
+    User ||--o{ Place : "has"
+    Place ||--o{ Review : "has"
+    Place }o--o{ Amenity : "has"
+    Place ||--o{ Place_Amenity : "has"
+    Amenity ||--o{ Place_Amenity : "has"
