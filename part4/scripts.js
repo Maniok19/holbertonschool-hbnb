@@ -350,6 +350,7 @@ function displayReviews(reviews) {
                 </div>
                 <div class="review-content">
                     <p>${review.text}</p>
+                    <p class="review-rating">Rating: ${review.rating} / 5</p>
                 </div>
             `;
             reviewsContainer.appendChild(reviewCard);
