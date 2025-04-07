@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restx import Api
-from flask_cors import CORS  # Add this import
+from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy 
@@ -18,16 +18,21 @@ from app.api.v1.auth import api as auth_ns
 from app.api.v1.protected import api as protected_ns
      
 def create_app(config_class="config.DevelopmentConfig"):
-    # Create Flask object first
     app = Flask(__name__)
-    
-    # Enable CORS for all routes
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
-    
-    # Configure the application
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hbnb.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.from_object(config_class)
+    
+    # Update CORS configuration to support credentials
+    CORS(app, resources={r"/api/*": {
+        "origins": ["http://localhost:5500", "http://127.0.0.1:5500"], 
+        "supports_credentials": True,
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }})
+    
+    # Initialize extensions
+    db.init_app(app)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
     
     # Create the API
     api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API',
@@ -40,11 +45,6 @@ def create_app(config_class="config.DevelopmentConfig"):
                   }
               })
               
-    # Initialize extensions
-    db.init_app(app)
-    bcrypt.init_app(app)
-    jwt.init_app(app)
-    
     # Register the namespaces
     api.add_namespace(users_ns, path='/api/v1/users')
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
