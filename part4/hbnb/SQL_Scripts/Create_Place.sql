@@ -1,0 +1,2 @@
+INSERT INTO places (_title, _description, _price, _latitude, _longitude, _owner_id, id)
+VALUES ('The White House', 'The White House is the official residence and workplace of the President of the United States.', 1000000, 38.8977, -77.0365, '12345678-1234-1234-1234-123456789012', 'abcdef12-3456-7890-abcd-ef1234567890');

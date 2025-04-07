@@ -35,3 +35,8 @@ Add Review (Task 5)
 Implement the form to add a review for a place.
 Ensure the form is accessible only to authenticated users, redirecting others to the index page.
 When testing your client against yout API you’ll probably get a Cross-Origin Resource Sharing (CORS) error. You’ll need to modify your API code to allow your client to fetch data from the API. Read this article for a depper understanding about CORS and how to configure your Flask API
+
+## front end command 
+```
+npx http-server -p 5500
+```
