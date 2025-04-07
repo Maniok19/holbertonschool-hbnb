@@ -243,6 +243,7 @@ class PlaceReviewList(Resource):
     def get(self, place_id):
         """Get reviews for a place"""
         place = facade.get_place(place_id)
+        review = facade.get_reviews_by_place(place_id)
         if place:
             reviews = []
             for review in place.reviews:
@@ -250,7 +251,14 @@ class PlaceReviewList(Resource):
                     'id': review.id,
                     'text': review.text,
                     'rating': review.rating,
-                    'user_id': review.user_id
+                    'user_id': review.user_id,
+                    'created_at': str(review.created_at),
+                    'user': {
+                        'id': review.user.id,
+                        'first_name': review.user.first_name,
+                        'last_name': review.user.last_name,
+                        'email': review.user.email
+                    }
                 })
             return reviews, 200
         return {'error': 'Place not found.'}, 404

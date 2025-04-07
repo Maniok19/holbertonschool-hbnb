@@ -30,7 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
             displayError('No place ID specified');
         }
     }
-    
+
+    const reviewsSection = document.getElementById('reviews');
+    if (reviewsSection) {
+        const token = getCookie('token');
+        fetchReviews(token);
+    }
+
     // Set up price filter event listener and populate options
     const priceFilter = document.getElementById('price-filter');
     if (priceFilter) {
@@ -278,6 +284,82 @@ function displayPlaceDetails(place) {
                 </div>
              </div>
     `;
+}
+
+async function fetchReviews(token) {
+    // Make a GET request to fetch reviews
+    // Include the token in the Authorization header
+    // Handle the response and pass the data to displayReviews function
+    const placeId = getPlaceIdFromURL();
+    if (!placeId) {
+        displayError('No place ID specified');
+        return;
+    }
+    try {
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch(`http://localhost:5000/api/v1/places/${placeId}/reviews`, {
+            method: 'GET',
+            headers: headers,
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const reviews = await response.json();
+            displayReviews(reviews);
+        } else {
+            displayError('Failed to fetch reviews: ' + response.statusText);
+        }
+    } catch (error) {
+        displayError('Error fetching reviews: ' + error.message);
+    }
+}
+function displayReviews(reviews) {
+    const reviewsSection = document.getElementById('reviews');
+    if (!reviewsSection) return;
+    reviewsSection.innerHTML = ''; // Clear existing content
+    
+    // Create header
+    const header = document.createElement('h2');
+    header.textContent = 'REVIEWS';
+    reviewsSection.appendChild(header);
+    
+    // Create reviews container
+    const reviewsContainer = document.createElement('div');
+    reviewsContainer.className = 'reviews-container';
+    reviewsSection.appendChild(reviewsContainer);
+    
+    if (Array.isArray(reviews) && reviews.length > 0) {
+        // Display each review
+        reviews.forEach(review => {
+            const reviewCard = document.createElement('div');
+            reviewCard.className = 'review-card';
+            reviewCard.innerHTML = `
+                <div class="review-header">
+                    <img src="images/ane.avif" alt="Reviewer" class="reviewer-img">
+                    <div class="reviewer-info">
+                        <h3 class="reviewer-name">${review.user.first_name}</h3>
+                        <p class="review-date">${review.created_at}</p>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p>${review.text}</p>
+                </div>
+            `;
+            reviewsContainer.appendChild(reviewCard);
+        });
+    } else {
+        // Display a message when no reviews are available
+        const noReviews = document.createElement('p');
+        noReviews.textContent = 'No reviews yet for this place.';
+        reviewsContainer.appendChild(noReviews);
+    }
 }
 
 // Function to handle price filtering

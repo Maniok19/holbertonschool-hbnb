@@ -32,6 +32,10 @@ def create_app(config_class="config.DevelopmentConfig"):
     @app.route('/api/v1/places/<place_id>', methods=['OPTIONS'])
     def handle_options_place(place_id):
         return '', 200
+    
+    @app.route('/api/v1/places/<place_id>/reviews', methods=['OPTIONS'])
+    def handle_options_place_reviews(place_id):
+        return '', 200
 
     # Initialize extensions
     db.init_app(app)
