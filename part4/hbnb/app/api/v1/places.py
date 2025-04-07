@@ -130,6 +130,8 @@ class PlaceList(Resource):
         for place in facade.get_all_places():
             places.append({
                 'id': place.id,
+                'price': str(place.price),
+                'description': place.description,
                 'title': place.title,
                 'latitude': place.latitude,
                 'longitude': place.longitude

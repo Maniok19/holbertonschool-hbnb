@@ -22,13 +22,13 @@ def create_app(config_class="config.DevelopmentConfig"):
     app.config.from_object(config_class)
     
     # Update CORS configuration to support credentials
-    CORS(app, resources={r"/api/*": {
-        "origins": ["http://localhost:5500", "http://127.0.0.1:5500"], 
-        "supports_credentials": True,
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }})
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5500", "http://127.0.0.1:5500"], 
+                                     "supports_credentials": True}})
     
+    @app.route('/api/v1/places', methods=['OPTIONS'])
+    def handle_options():
+        return '', 200
+
     # Initialize extensions
     db.init_app(app)
     bcrypt.init_app(app)
