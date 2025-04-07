@@ -159,7 +159,8 @@ class PlaceResource(Resource):
                     'id': owner.id,
                     'first_name': owner.first_name,
                     'last_name': owner.last_name,
-                    'email': owner.email
+                    'email': owner.email,
+                    'created_at': str(owner.created_at),
                 },
                 'amenities': [
                     {

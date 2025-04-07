@@ -19,6 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check authentication status when loading index page
     checkAuthentication();
     
+    // Check if we're on the place details page
+    const placeDetailsSection = document.getElementById('place-details');
+    if (placeDetailsSection) {
+        const placeId = getPlaceIdFromURL();
+        if (placeId) {
+            const token = getCookie('token');
+            fetchPlaceDetails(token, placeId);
+        } else {
+            displayError('No place ID specified');
+        }
+    }
+    
     // Set up price filter event listener and populate options
     const priceFilter = document.getElementById('price-filter');
     if (priceFilter) {
@@ -180,6 +192,92 @@ function createPlaceElement(place) {
     `;
     
     return placeDiv;
+}
+
+function getPlaceIdFromURL() {
+    // Extract the place ID from window.location.search
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+}
+
+async function fetchPlaceDetails(token, placeId) {
+    // Make a GET request to fetch place details
+    // Include the token in the Authorization header
+    // Handle the response and pass the data to displayPlaceDetails function
+    try {
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch(`http://localhost:5000/api/v1/places/${placeId}`, {
+            method: 'GET',
+            headers: headers,
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const placeDetails = await response.json();
+            displayPlaceDetails(placeDetails);
+        } else {
+            displayError('Failed to fetch place details: ' + response.statusText);
+        }
+    } catch (error) {
+        displayError('Error fetching place details: ' + error.message);
+    }
+}
+
+function displayPlaceDetails(place) {
+    // Clear the current content of the place details section
+    // Create elements to display the place details (name, description, price, amenities and reviews)
+    // Append the created elements to the place details section
+    const placeDetailsSection = document.getElementById('place-details');
+    if (!placeDetailsSection) return;
+    placeDetailsSection.innerHTML = ''; // Clear existing content
+    placeDetailsSection.innerHTML = `
+             <div class="place_header">
+                <h1 id="place-name">${place.title}</h1>
+                <p id="place-location">${place.longitude}, ${place.latitude}</p>
+             </div>
+             <div class="place-info">
+                <div class="place-main-info">
+                    <div class="place-main-image">
+                        <img id="place-main-image" src="images/shrek_home.webp" alt="Place image">
+                    </div>
+                    <div class="place-description">
+                        <h2>Description</h2>
+                        <p id="place-description-text">${place.description}</p>
+                    </div>
+                    <div class="place-details-sidebar">
+                        <div class="place-price-info">
+                            <h3>Price :</h3>
+                            <p id="place-price">$ ${place.price}</p>
+                            <p id="place-per-night">per night</p>
+                        </div>
+                        <div class="host-info">
+                            <h3>Host</h3>
+                            <div class="host-details">
+                                <img src="images/shrek.jpg" alt="host-img">
+                                <div>
+                                    <p id="host-name">${place.owner.first_name}</p>
+                                    <p id="host-since">Host since ${place.owner.created_at}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="place-amenities">
+                        <!-- TO POPULATE-->
+                        <h3>Amenities</h3>
+                        <ul id="amenities-list">
+                        ${place.amenities.map(amenity => `<li>${amenity.name}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+             </div>
+    `;
 }
 
 // Function to handle price filtering
