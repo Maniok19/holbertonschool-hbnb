@@ -56,7 +56,7 @@ class ReviewList(Resource):
             return {'error': 'You have already reviewed this place.'}, 400
 
         if current_user['id'] == place.owner_id:
-            return {'error': 'Unauthorized action.'}, 403
+            return {'error': 'Unauthorized action. Cant review own place'}, 403
 
         try:
             review = facade.create_review(review_data)

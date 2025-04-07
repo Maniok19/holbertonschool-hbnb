@@ -16,7 +16,7 @@ body {
 }
 
 header {
-    background-color: #333;
+    background-color: #2c249b;
     color: #fff;
     padding: 1rem;
 }
@@ -342,13 +342,13 @@ main {
 }
 
 #login-form input:focus {
-    border-color: #4CAF50;
+    border-color: #2c249b;
     outline: none;
 }
 
 #login-form button {
     width: 100%;
-    background-color: #4CAF50;
+    background-color: #2c249b;
     color: white;
     border: none;
     padding: 14px;
@@ -402,7 +402,7 @@ main {
 }
 
 .logout-button:hover {
-    background-color: #d32f2f;
+    background-color: #2c249b;
 }
 
 /* Grid layout for place cards */
@@ -444,7 +444,7 @@ main {
 
 .details-button {
   display: inline-block;
-  background-color: #5451e6;
+  background-color: #2c249b;
   color: white;
   padding: 8px 16px;
   border-radius: 4px;

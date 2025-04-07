@@ -64,6 +64,35 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add event listener
         priceFilter.addEventListener('change', handlePriceFilter);
     }
+
+    // Add event listener for review form submission
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const token = getCookie('token');
+            if (!token) {
+                displayError('You must be logged in to submit a review');
+                return;
+            }
+            
+            const placeId = getPlaceIdFromURL();
+            if (!placeId) {
+                displayError('No place ID specified');
+                return;
+            }
+            
+            const text = document.getElementById('review').value;
+            const rating = document.getElementById('rating').value;
+            
+            try {
+                await submitReview(token, placeId, text, rating);
+            } catch (error) {
+                displayError(error.message || 'An error occurred while submitting the review');
+            }
+        });
+    }
 });
 
 async function loginUser(email, password) {
@@ -108,11 +137,14 @@ function getCookie(name) {
 function checkAuthentication() {
     const token = getCookie('token');
     const loginLink = document.getElementById('login-link');
+    const addReviewSection = document.getElementById('add-review');
     
     if (!token) {
         if (loginLink) loginLink.style.display = 'block';
+        if (addReviewSection) addReviewSection.style.display = 'none';
     } else {
         if (loginLink) loginLink.style.display = 'none';
+        if (addReviewSection) addReviewSection.style.display = 'block';
         fetchPlaces(token);
     }
 }
@@ -390,5 +422,67 @@ function handlePriceFilter(event) {
             cardsContainer.appendChild(placeElement);
         }
     });
+}
+
+// Function to submit a review
+async function submitReview(token, placeId, text, rating) {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+        
+        // Decode the JWT token to get the user ID
+        const tokenPayload = parseJwt(token);
+        const userId = tokenPayload.sub || tokenPayload.id;
+        
+        if (!userId) {
+            throw new Error('Could not determine user ID from token');
+        }
+        
+        const response = await fetch(`http://localhost:5000/api/v1/reviews/`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                text: text,
+                rating: parseInt(rating),
+                user_id: userId.id,
+                place_id: placeId
+            }), 
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            // Clear the form
+            document.getElementById('review').value = '';
+            document.getElementById('rating').value = '5';
+            
+            // Refresh the reviews list
+            await fetchReviews(token);
+            
+            // Show success message
+            alert('Review submitted successfully!');
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to submit review: ' + response.statusText);
+        }
+    } catch (error) {
+        throw new Error('Error submitting review: ' + error.message);
+    }
+}
+
+// Helper function to parse JWT token
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        console.error('Error parsing JWT token:', e);
+        return {};
+    }
 }
 
