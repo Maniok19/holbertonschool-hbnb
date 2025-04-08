@@ -145,8 +145,9 @@ function checkAuthentication() {
     } else {
         if (loginLink) loginLink.style.display = 'none';
         if (addReviewSection) addReviewSection.style.display = 'block';
-        fetchPlaces(token);
+        
     }
+    fetchPlaces(token);
 }
 
 // Function to display error messages
