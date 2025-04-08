@@ -284,19 +284,15 @@ main {
 }
 
 #review-form button {
-    background-color: #4CAF50;
+    background-color: #2c249b;
     color: white;
     border: none;
     padding: 12px 20px;
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
-    align-self: flex-start;
+    align-self: flex-end;
     transition: background-color 0.3s;
-}
-
-#review-form button:hover {
-    background-color: #45a049;
 }
 
 /* Login Page Styles */
