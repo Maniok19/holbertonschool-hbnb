@@ -26,14 +26,19 @@ Apply modern web development practices to create a dynamic web application
 
 ## API Endpoint used
 POST /api/v1/auth/login: User authentication
+
 GET /api/v1/places: Retrieve all places
+
 GET /api/v1/places/{id}: Get specific place details
+
 GET /api/v1/places/{id}/reviews: Get reviews for a place
+
 POST /api/v1/reviews: Create a new review
 
 ## Images of the site running
 ![alt text](images/example.png)
 ![alt text](images/example2.png)
+
 ## Requirements
 - Python 3.8+
 - Flask
@@ -67,6 +72,7 @@ sqlite3 instance/development.db < SQL_Scripts/Initial_data.sql
 ```
 The test admin email is : admin@hbnb.io
                     mdp : admin1234
+
 6. Start the front-end
 ```bash
 # Install http-server if you don't have it
