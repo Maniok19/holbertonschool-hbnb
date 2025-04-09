@@ -25,9 +25,19 @@ Apply modern web development practices to create a dynamic web application
 - Endpoints for all AirBnB objects (User, Place, State, City, Amenity, Review)
 
 ## API Endpoint used
-POST /api/v1/auth/login: User authentication
 
-GET /api/v1/places: Retrieve all places
+| HTTP Method | Endpoint | Description |
+|-------------|----------|-------------|
+| POST | /api/v1/auth/login | Retrieve all places |
+| GET | /api/v1/places | List all places |
+| GET | /api/v1/places/{id} | Get a specific place |
+| GET | /api/v1/places/{id}/reviews | Get reviews for a place |
+| POST | /api/v1/reviews | Create a new review |
+
+
+POST : User authentication
+
+GET : 
 
 GET /api/v1/places/{id}: Get specific place details
 
@@ -84,17 +94,6 @@ npx http-server -p 5500
 7. Acces the site:
 Go to your browser and copy past the link of the front-end from the npm terminal
 
-## API Endpoints
-
-| HTTP Method | Endpoint | Description |
-|-------------|----------|-------------|
-| GET | /api/v1/status | Check API status |
-| GET | /api/v1/users | List all users |
-| GET | /api/v1/users/<user_id> | Get a specific user |
-| POST | /api/v1/users | Create a new user |
-| PUT | /api/v1/users/<user_id> | Update a user |
-| DELETE | /api/v1/users/<user_id> | Delete a user |
-| GET | /api/v1/places | List all places |
 
 ## To test login feature
 To test this feature, insert the admin logs (admin@hbnb.io   admin1234)
