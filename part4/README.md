@@ -65,6 +65,8 @@ python3 run.py
 ```
 sqlite3 instance/development.db < SQL_Scripts/Initial_data.sql
 ```
+The test admin email is : admin@hbnb.io
+                    mdp : admin1234
 6. Start the front-end
 ```bash
 # Install http-server if you don't have it
@@ -74,7 +76,7 @@ npm install -g http-server
 npx http-server -p 5500
 ```
 7. Acces the site:
-Go to your browser and copy past the link of the front-end
+Go to your browser and copy past the link of the front-end from the npm terminal
 
 ## API Endpoints
 
