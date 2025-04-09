@@ -90,6 +90,12 @@ Go to your browser and copy past the link of the front-end from the npm terminal
 | DELETE | /api/v1/users/<user_id> | Delete a user |
 | GET | /api/v1/places | List all places |
 
+## To test login feature
+To test this feature, insert the admin logs (admin@hbnb.io   admin1234)
+
+## To test review feature
+To test this feature, go to a place you dont own (all except The white house) and add a review at the bottom of the page
+
 ## Technologies Used
 Frontend: HTML5, CSS3, JavaScript ES6
 API Communication: Fetch API
