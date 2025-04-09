@@ -67,23 +67,25 @@ cd holbertonschool-hbnb/part4
 
 2. Install dependencies:
 ```bash
+cd hbnb
 pip install -r requirements.txt
 ```
 
-3. Configure your database settings in `config.py`
+3. (Optional)Configure your database settings in `config.py`
+by default it will create SQLite instance
 
 4. Start the back-end:
 ```bash
 python3 run.py
 ```
-5. Populate the database:
+5. Populate the database (in a second terminal):
 ```
 sqlite3 instance/development.db < SQL_Scripts/Initial_data.sql
 ```
 The test admin email is : admin@hbnb.io
                     mdp : admin1234
 
-6. Start the front-end
+6. Start the front-end (in a third terminal)
 ```bash
 # Install http-server if you don't have it
 npm install -g http-server
